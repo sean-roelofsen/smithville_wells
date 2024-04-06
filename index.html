@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset=utf-8 />
+<title>MECP Central Region Water Inspectors Webmap Tool</title>
+<link rel="icon" href='https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/favicon.ico' type="image/x-icon">
+<meta name="viewport" content='width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no'/>
+<meta name="apple-mobile-web-app-title" content="CR DW Webmap">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+
+	<head>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Leaflet Locate Control CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+    <!-- Leaflet Geosearch CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.1.0/dist/geosearch.css"/>
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <!-- Leaflet GPS CSS -->
+    <link rel="stylesheet" href="https://raw.githubusercontent.com/stefanocudini/leaflet-gps/master/src/leaflet-gps.css" />
+    <!-- Leaflet EasyButton CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2.4.0/src/easy-button.css">
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" />
+    <!-- Leaflet PolylineMeasure CSS -->
+    <link rel="stylesheet" href="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Leaflet Locate Control JS -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+    <!-- Leaflet Geosearch JS -->
+    <script src="https://unpkg.com/leaflet-geosearch@3.1.0/dist/bundle.min.js"></script>
+    <!-- jQuery JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- jQuery UI JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Leaflet GPS JS -->
+    <script src="https://raw.githubusercontent.com/stefanocudini/leaflet-gps/master/src/leaflet-gps.js"></script>
+    <!-- Leaflet EasyButton JS -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2.4.0/src/easy-button.js"></script>
+    <!-- Leaflet PolylineMeasure JS -->
+    <script src="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.js"></script>
+
+</head>
+
+
+
+
+  <!--<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">-->
+
+<!--<script type="text/css"></script>-->
+<!--<div id="map" class="map">  </div>-->
+
+<style>
+
+/* These rules are applied to the layer toggle in top right corner, a cleaner look than the default toggle */
+.leaflet-control-layers-toggle {
+  background-image: url(https://i.stack.imgur.com/3keSg.png) !important;
+	background-color: #2da0e2;
+  background-size: 30px 30px;
+		}
+
+	.leaflet-touch .leaflet-control-layers-toggle {
+	background-image: url(https://i.stack.imgur.com/3keSg.png) !important;
+	background-color: #2da0e2;
+	}
+
+.leaflet-control-layers-expanded {
+  color: white;
+	background-color: #2da0e2;
+	}
+
+/* Hide checkboxes for the 1st, 4th, and 10th layers */
+.leaflet-control-layers-overlays label:nth-child(1) .leaflet-control-layers-selector,
+.leaflet-control-layers-overlays label:nth-child(7) .leaflet-control-layers-selector,
+.leaflet-control-layers-overlays label:nth-child(13) .leaflet-control-layers-selector {
+    display: none; /* Hides the checkbox */
+}
+
+/* Optionally, disable pointer events for these labels to prevent clicking */
+.leaflet-control-layers-overlays label:nth-child(1),
+.leaflet-control-layers-overlays label:nth-child(7),
+.leaflet-control-layers-overlays label:nth-child(13) {
+    pointer-events: none;
+    font-weight: bold; /* Makes the text bold */
+    font-size: 1em; /* Increases the font size */
+    padding: 3px; /* Adds some padding for visual space */
+    border-radius: 4px; /* Optional: Adds rounded corners for a softer look */
+    margin-bottom: 3px; /* Ensures spacing between this and the next label */
+    color: #ffffff; /* Change text color */
+    border: 2px solid #007bff; /* Adds a border */
+
+}
+
+/* set style parameters to account for Information box(list) and map (fills entire screen), with separate properties, also allows LayerControl box to not inherit the same parameters as the info box -this was the section giving me a ton of issues, with the LayerControl box opening the same size as the info box... fixed now! */
+#map {
+    position: absolute;
+    top: 0%;
+    bottom: 0%;
+    width: 100%;
+    scroll-behavior: zoom;
+}
+
+#toggle-button {
+    position: absolute;
+    top: 2%;
+    left:  5%;
+    /*bottom: 0%;
+    width: 100%;
+    width: 20px;*/
+    /*visibility: hidden;*/
+    height: 15px;
+    border: 1px solid rgb(33,13, 40);
+    border-radius: 1px;
+    z-index: 1800;
+    font-family: Tahoma;
+    font-size: 8pt;
+    background: #bebebe;
+    cursor: pointer;
+    scroll-behavior: auto;
+}
+
+
+.target { 
+    display: block;
+    clear:both;
+    position: fixed;
+    left: 5%;
+    top: 45px;
+    width: 320px;
+    /*visibility: hidden;*/
+    height: 510px;
+    opacity: 0.9;
+    margin: 5px auto;
+    padding: 0 15px;
+    background: #d3d3d3;
+    border: 2px solid rgb(33,13, 40);
+    border-radius: 3px;
+    z-index: 1800;
+    font-family: Tahoma;
+    font-size: 12pt;
+    /*display: show;*/
+    text-decoration-color: #000000;
+    scroll-behavior: auto;
+}
+    
+.hidden {
+    display: none;
+}
+
+.leaflet-control-basemapsSwitcher{
+    height: auto;
+    width: auto;
+    display:flex;
+}
+
+.leaflet-control-basemapsSwitcher:hover{
+    cursor: pointer;
+}
+
+.basemapImg{
+    box-shadow: 2px 2px 5px rgb(0 0 0 / 65%);
+    background-color: #fff;
+    margin:5px;
+    padding:5px;
+    border-radius: 3px 3px;
+}
+
+.basemapImg div{
+    background-size: 55px 55px;
+    width: 55px;
+    height: 55px;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.basemapImg div .name{
+    width:100%;
+    height:auto;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 0;
+    color:black;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    padding:1px;
+}
+
+.basemapImg div .check{
+    width:auto;
+    height:auto;
+    border-radius: 0;
+    display: flex;
+    align-items: flex-end;
+    font-weight: 500;
+    padding:1px;
+    /*content:''*/
+}
+
+.activeMap::before{
+    color:white;
+    content: '✔';
+    width: 18px;
+    height: 18px;
+    background-color: #387B23;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* *******************start of Custom Inspector label CSS*****************/
+
+.custom-label-twenty {
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 2px; /* Some padding around the text */
+    border-radius: 4px; /* Rounded corners */
+    text-align: center; /* Center the text */
+    font-size: 12px; /* Set the font size */
+    z-index: 10000;
+    color: #000000; /* Dark text for readability */
+    pointer-events: none; /* Labels won't block map interactions */
+    display: flex; /* Set display to flex */
+    justify-content: center; /* Center horizontally in the flex container */
+    align-items: center; /* Center vertically in the flex container */
+}
+
+
+.custom-label-twentyone {
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 2px; /* Some padding around the text */
+    border-radius: 4px; /* Rounded corners */
+    text-align: center; /* Center the text */
+    font-size: 12px; /* Set the font size */
+    z-index: 10000;
+    color: #000000; /* Dark text for readability */
+    pointer-events: none; /* Labels won't block map interactions */
+    display: flex; /* Set display to flex */
+    justify-content: center; /* Center horizontally in the flex container */
+    align-items: center; /* Center vertically in the flex container */
+}
+
+.custom-label-twentytwo {
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 2px; /* Some padding around the text */
+    border-radius: 4px; /* Rounded corners */
+    text-align: center; /* Center the text */
+    font-size: 12px; /* Set the font size */
+    z-index: 10000;
+    color: #000000; /* Dark text for readability */
+    pointer-events: none; /* Labels won't block map interactions */
+    display: flex; /* Set display to flex */
+    justify-content: center; /* Center horizontally in the flex container */
+    align-items: center; /* Center vertically in the flex container */
+}
+
+.custom-label-twentythree {
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 2px; /* Some padding around the text */
+    border-radius: 4px; /* Rounded corners */
+    text-align: center; /* Center the text */
+    font-size: 12px; /* Set the font size */
+    z-index: 10000;
+    color: #000000; /* Dark text for readability */
+    pointer-events: none; /* Labels won't block map interactions */
+    display: flex; /* Set display to flex */
+    justify-content: center; /* Center horizontally in the flex container */
+    align-items: center; /* Center vertically in the flex container */
+}
+
+.custom-label-twentyfour {
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 2px; /* Some padding around the text */
+    border-radius: 4px; /* Rounded corners */
+    text-align: center; /* Center the text */
+    font-size: 12px; /* Set the font size */
+    z-index: 10000;
+    color: #000000; /* Dark text for readability */
+    pointer-events: none; /* Labels won't block map interactions */
+    display: flex; /* Set display to flex */
+    justify-content: center; /* Center horizontally in the flex container */
+    align-items: center; /* Center vertically in the flex container */
+}
+
+/******************END of custom CSS Inspector labels***********************/
+
+
+
+/* Target the specific icon in the 'add-marker' state */
+.leaflet-bar .fa-map-marker-alt {
+    color: green; /* Change icon color to green */
+}
+
+/* Optional: Change the icon color on hover for better UX */
+.leaflet-bar .fa-map-marker-alt:hover {
+    color: darkgreen; /* Darker green on hover */
+}
+
+/* Target the specific icon in the 'add-marker' state */
+.leaflet-bar .fa-info-circle {
+    color: blue; /* Change icon color to green */
+}
+
+/* Optional: Change the icon color on hover for better UX */
+.leaflet-bar .fa-info-circle:hover {
+    color: darkblue; /* Darker green on hover */
+}
+
+
+/* Target the specific icon in the 'add-marker' state */
+.leaflet-bar .fa-google {
+    color: royalblue; /* Change icon color to green */
+}
+
+/* Optional: Change the icon color on hover for better UX */
+.leaflet-bar .fa-google:hover {
+    color: darkblue; /* Darker green on hover */
+}
+
+
+/* Target the specific icon in the 'add-marker' state */
+.leaflet-bar .fa-home {
+    color: saddlebrown; /* Change icon color to green */
+}
+
+/* Optional: Change the icon color on hover for better UX */
+.leaflet-bar .fa-home:hover {
+    color: brown /* Darker green on hover */
+}
+
+/* Target the specific icon in the 'add-marker' state */
+.leaflet-bar .fa-trash-alt {
+    color: indianred; /*Change icon color to green */
+}
+
+/* Optional: Change the icon color on hover for better UX */
+.leaflet-bar .fa-trash-alt:hover {
+    color: darkred; /* Darker green on hover */
+}
+
+#weatherInfo {
+        position: absolute;
+        bottom: 55px;
+        left: 40px;
+        background-color: white;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        z-index: 1000;
+        max-width: 90%; /* Maximum width */
+        box-sizing: border-box; /* Include padding and border in the width */
+        overflow: auto; /* Add scroll for overflow content */
+        font-size: 14px; /* Adjust font size */
+    }
+
+
+
+.alert-info {
+    background-color: rgba(255, 255, 0, 0.5); /* Yellow with partial transparency */
+    padding: 1px;
+    margin: 1px 0;
+    border-radius: 1px;
+    max-width: 275px; /* Adjust the width as needed */
+    word-wrap: break-word;
+
+}
+
+.low-risk {
+    background-color: rgba(0, 0, 255, 0.3); /* Blue with transparency */
+}
+
+.moderate-risk {
+    background-color: rgba(255, 255, 0, 0.3); /* Yellow with transparency */
+}
+
+.high-risk {
+    background-color: rgba(255, 165, 0, 0.3); /* Orange with transparency */
+}
+
+.very-high-risk {
+    background-color: rgba(255, 0, 0, 0.3); /* Red with transparency */
+}
+
+/* AQI CSS Classes with translucent backgrounds */
+.green {
+    background-color: rgba(0, 128, 0, 0.5); /* Green with 50% transparency */
+    color: black; /* Black text for better readability */
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.yellow {
+    background-color: rgba(255, 255, 0, 0.5); /* Yellow with 50% transparency */
+    color: black; /* Black text for better readability */
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.orange {
+    background-color: rgba(255, 165, 0, 0.5); /* Orange with 50% transparency */
+    color: black;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.red {
+    background-color: rgba(255, 0, 0, 0.5); /* Red with 50% transparency */
+    color: black;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.purple {
+    background-color: rgba(128, 0, 128, 0.5); /* Purple with 50% transparency */
+    color: black;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.maroon {
+    background-color: rgba(128, 0, 0, 0.5); /* Maroon with 50% transparency */
+    color: black;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+/* Optional: Class for unknown risk level */
+.unknown {
+    background-color: rgba(128, 128, 128, 0.5); /* Grey with 50% transparency */
+    color: black;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+
+p {
+    font-size: .9em;
+    line-height: 1.5em;
+  }
+
+
+
+@media screen and (max-width: 768px) {
+  .target {
+    visibility: hidden;
+    clear: both;
+    top: 70px;
+    width: 100px;
+    /*visibility: hidden;
+    width: 28%;*/
+    height: 100px;
+    float: left;
+    margin: 10px auto 5px 20px;
+    
+    display: none;
+}
+
+ #toggle-button {
+    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 28%;
+    display: none;
+  }
+
+  #weatherInfo {
+            font-size: 12px; /* Smaller font size for very small devices */
+            padding: 5px; /* Less padding */
+            max-width: 80%;
+        }
+    .leaflet-control-layers-overlays label:nth-child(1),
+    .leaflet-control-layers-overlays label:nth-child(7),
+    .leaflet-control-layers-overlays label:nth-child(13) {
+        font-size: 1.1em; /* Slightly larger font size for better readability */
+      }
+
+}
+
+
+
+body {
+    margin: 0;
+    padding: 0;
+  }
+	
+</style>
+</head>
+
+
+<body>
+
+<div id="map"></div>
+<div id="weatherInfo" style="display: none;">temp info</div>
+
+<button id="toggle-button"> &nbspShow/Hide Map Details&nbsp </button>
+
+
+<div class="target">
+
+<p><b><u>Central Region Water Inspectors </u> &nbsp</b><a href="https://www.ontario.ca/page/ministry-environment-conservation-parks" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/OwenSoundWW/main/ONLOGO.png" alt="MECP" width="60" height="20"></a></p>
+
+<p><a href="https://cr-wco-contacts.netlify.app/" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Inspector_List_Apr_24.png" alt="MECP CR Inspector List" width="325" height="300"></a></p>
+
+<center><a href="https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Toronto%20WW%20DW.png" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Toronto%20WW%20DW.png" alt="Toronto DW & WW" width="325" height="95"></a></center>
+<span style="font-size: 9px;">updated 3Apr24</span>
+
+</div>
+
+
+	<script>
+		var lat = 43.1034;
+		var lng = -79.5370;
+		var zoom = 16.0;
+
+		
+
+   // Sets centre of map at the LatLong specified with Zoom level
+      var map = L.map('map', {
+          zoomControl: false,
+          maxZoom:18,
+          tap: false
+          
+          });
+
+        map.setView([lat, lng], zoom);
+       
+             
+
+  
+
+
+
+//Poly-line Measure Control Start
+L.control.scale ({maxWidth:240, metric:true, imperial:false, position: 'bottomleft'}).addTo (map);
+            let polylineMeasure = L.control.polylineMeasure ({position:'topleft', unit:'kilometres', showBearings:false, clearMeasurementsOnStop: false, showClearControl: true, showUnitControl: false})
+            polylineMeasure.addTo (map);
+
+            function debugevent(e) { console.debug(e.type, e, polylineMeasure._currentLine) }
+
+            map.on('polylinemeasure:toggle', debugevent);
+            map.on('polylinemeasure:start', debugevent);
+            map.on('polylinemeasure:resume', debugevent);
+            map.on('polylinemeasure:finish', debugevent);
+            map.on('polylinemeasure:change', debugevent);
+            map.on('polylinemeasure:clear', debugevent);
+            map.on('polylinemeasure:add', debugevent);
+            map.on('polylinemeasure:insert', debugevent);
+            map.on('polylinemeasure:move', debugevent);
+            map.on('polylinemeasure:remove', debugevent);
+
+
+//L.control.polylineMeasure().addTo(map);
+
+
+
+//GPS*******************
+
+
+
+
+
+
+//creates search box and places at the top of the map for user searches provided by OpenStreetMap, zooms in to search entry upon selection
+
+//const provider = new window.GeoSearch.EsriProvider();
+  // Custom query function for the OpenStreetMap provider
+        const provider = new window.GeoSearch.OpenStreetMapProvider();
+            
+
+        // Add the geosearch control to the map
+        const search = new GeoSearch.GeoSearchControl({
+            provider: provider,
+            showMarker: true,
+            autoClose: true,
+            showPopup: true,
+            popupFormat: ({ query, result }) => `
+                ${result.label}<br />
+                LatLong: ${result.y.toFixed(5)}, ${result.x.toFixed(5)}
+            `,
+            marker: {
+                icon: new L.Icon.Default(),
+                draggable: false,
+            },
+            keepResult: true,
+            style: 'button'
+        }).addTo(map);
+
+
+//Basemap switcher**************
+L.Control.basemapsSwitcher = L.Control.extend({
+    options: {
+        position: 'topright',
+        maxZoom: 18,
+    },
+
+    initialize: function(layers, options){
+        L.Util.setOptions(this, options);
+        this.layers = layers
+    },
+
+    onAdd: function (map){
+        const container = this.container = L.DomUtil.create('div', 'leaflet-control-basemapsSwitcher');
+
+        this._createItems();
+        this._collapse();
+
+        container.addEventListener('mouseover', () => {
+            this._expand();
+        })
+
+        container.addEventListener('mouseout', () => {
+            this._collapse();
+        })
+
+        return container;
+    },
+
+    _createItems() {
+        this.layers.forEach( (obj, index) => {
+
+            obj.id = index
+
+            const imgContainer = L.DomUtil.create('div', 'basemapImg');
+            const img = L.DomUtil.create('div');
+            const name = L.DomUtil.create('div', 'name');
+            const check = L.DomUtil.create('div', 'check');
+            name.innerHTML = obj.name
+
+            if(obj.layer?._map){
+                this.activeMap = obj
+                check.classList.add('activeMap');
+            }
+            
+            img.style.backgroundImage = `url(${obj.icon})`;
+            imgContainer.append(img)
+            img.append(check)
+            img.append(name)
+            
+            imgContainer.addEventListener('click', () =>{
+
+                this._removeLayers(obj.layer);
+                
+                if(!obj.layer?._map){
+                    obj.layer.addTo(this._map);
+                    this.activeMap = obj;
+                    this._collapse();
+
+                    check.classList.add('activeMap');
+                }
+
+            })
+
+            this.container.append(imgContainer)
+
+        })
+    },
+
+    _removeLayers(layer){
+
+        this.layers.forEach( (obj) =>{
+            if(obj.layer._leaflet_id !== layer._leaflet_id && obj.layer?._map) {
+                this._map.removeLayer(obj.layer);
+            }
+        })
+    },
+
+    _collapse(){
+
+        this.container.childNodes.forEach( (child, index) => {
+
+            if(index !== this.activeMap.id){
+                child.classList.add('hidden')
+                let check = child.querySelector('.check')
+                check.classList.remove('activeMap')
+            }
+        })
+
+    },
+
+    _expand(){
+
+        this.container.childNodes.forEach( (child) => {
+            child.classList.remove('hidden')
+        })
+    }
+
+})
+
+L.basemapsSwitcher = function(layers, options){
+    return new L.Control.basemapsSwitcher(layers, options);  
+}
+
+//creates home zoom control box, with large home icon and larger zoom+/- icons from fontawesome, home button returns to full out zoom and mapcenter
+    L.Control.zoomHome = L.Control.extend({
+    options: {
+        position: 'topleft',
+        zoomInText: '<i class="fa fa-plus fa-lg"></i>',
+        zoomInTitle: 'Zoom in',
+        zoomOutText: '<i class="fa fa-minus fa-lg"></i>',
+        zoomOutTitle: 'Zoom out',
+        zoomHomeText: '<i class="fa fa-home fa-lg" style="line-height:2;"></i>',
+        zoomHomeTitle: 'Zoom home'
+    },
+
+    onAdd: function (map) {
+        var controlName = 'gin-control-zoom',
+            container = L.DomUtil.create('div', controlName + ' leaflet-bar'),
+            options = this.options;
+
+        this._zoomInButton = this._createButton(options.zoomInText, options.zoomInTitle,
+        controlName + '-in', container, this._zoomIn);
+        this._zoomHomeButton = this._createButton(options.zoomHomeText, options.zoomHomeTitle,
+        controlName + '-home', container, this._zoomHome);
+        this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle,
+        controlName + '-out', container, this._zoomOut);
+
+        this._updateDisabled();
+        map.on('zoomend zoomlevelschange', this._updateDisabled, this);
+
+        return container;
+    },
+
+    onRemove: function (map) {
+        map.off('zoomend zoomlevelschange', this._updateDisabled, this);
+    },
+
+    _zoomIn: function (e) {
+        this._map.zoomIn(e.shiftKey ? 3 : 1);
+    },
+
+    _zoomOut: function (e) {
+        this._map.zoomOut(e.shiftKey ? 3 : 1);
+    },
+
+    _zoomHome: function (e) {
+        map.setView([lat, lng], zoom);
+    },
+
+    _createButton: function (html, title, className, container, fn) {
+        var link = L.DomUtil.create('a', className, container);
+        link.innerHTML = html;
+        link.href = '#';
+        link.title = title;
+
+        L.DomEvent.on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+            .on(link, 'click', L.DomEvent.stop)
+            .on(link, 'click', fn, this)
+            .on(link, 'click', this._refocusOnMap, this);
+
+        return link;
+    },
+
+    _updateDisabled: function () {
+        var map = this._map,
+            className = 'leaflet-disabled';
+
+        L.DomUtil.removeClass(this._zoomInButton, className);
+        L.DomUtil.removeClass(this._zoomOutButton, className);
+
+        if (map._zoom === map.getMinZoom()) {
+            L.DomUtil.addClass(this._zoomOutButton, className);
+        }
+        if (map._zoom === map.getMaxZoom()) {
+            L.DomUtil.addClass(this._zoomInButton, className);
+        }
+    }
+});
+
+// add the new custom zoom control to the map with home button and larger fontawesome icons for clarity (defaults too small)
+var zoomHome = new L.Control.zoomHome();
+zoomHome.addTo(map);
+
+
+document.getElementById('toggle-button').addEventListener('click', function () {
+    toggle(document.querySelectorAll('.target'));
+});
+
+function toggle (elements, specifiedDisplay) {
+  var element, index;
+
+  elements = elements.length ? elements : [elements];
+  for (index = 0; index < elements.length; index++) {
+    element = elements[index];
+
+    if (isElementHidden(element)) {
+      element.style.display = '';
+
+      // If the element is still hidden after removing the inline display
+      if (isElementHidden(element)) {
+        element.style.display = specifiedDisplay || 'block';
+      }
+    } else {
+      element.style.display = 'none';
+    }
+  }
+  function isElementHidden (element) {
+    return window.getComputedStyle(element, null).getPropertyValue('display') === 'none';
+  }
+}
+
+
+
+//BASEMAP SWITCHER START*****************************
+new L.basemapsSwitcher([
+
+    {
+    layer: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+      attribution: '<a href="https://www.openstreetmap.org/copyright">OSM</a> | CRWITool'
+          }).addTo(map), //DEFAULT MAP
+    icon: 'https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/Basemap1Carto.png',
+    name: 'Mobile'
+  },
+   {
+    layer: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '<a href="https://www.openstreetmap.org/copyright">OSM</a> | CRWITool'
+              //attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }), 
+    icon: 'https://raw.githubusercontent.com/sean-roelofsen/Hamilton/main/OSMThumbs.png',
+    name: 'OSM'
+  },
+  
+  {
+    layer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '<a href="https://www.openstreetmap.org/copyright">OSM</a> | CRWITool'
+             // attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    }),
+    icon: 'https://raw.githubusercontent.com/sean-roelofsen/HP-Abatement/main/AerialImageryESRIThumb.png',
+    name: 'Imagery'
+    
+
+  },
+], { position: 'bottomright' }).addTo(map);
+
+
+
+
+//************** CUSTOM ICON CODE AREA ********************
+//create all map icons here with free url links from www.flaticon.com, no token required for these free icons, should remain active
+//simply copy/paste url into these variables
+
+//https://cdn-icons-png.flaticon.com/512/595/595005.png  red dot
+//https://cdn-icons-png.flaticon.com/512/4668/4668400.png  pin
+//https://cdn-icons-png.flaticon.com/512/727/727598.png pin with stand
+//https://cdn-icons-png.flaticon.com/512/1828/1828535.png bullseye red dot
+//https://cdn-icons-png.flaticon.com/512/58/58960.png  black marker1
+//https://cdn-icons-png.flaticon.com/512/684/684908.png red marker
+//https://cdn-icons-png.flaticon.com/512/684/684850.png black marker1 with bullesye
+//https://cdn-icons-png.flaticon.com/512/7893/7893157.png black marker with circle shadow
+//https://cdn-icons-png.flaticon.com/512/149/149983.png  black pin
+//https://cdn-icons-png.flaticon.com/512/3722/3722026.png black marker with diamond base
+//https://cdn-icons-png.flaticon.com/512/4874/4874738.png red marker ***
+//https://cdn-icons-png.flaticon.com/512/7525/7525205.png sharper red marker ***
+//https://cdn-icons-png.flaticon.com/512/252/252106.png red marker thick black outline 
+//https://cdn-icons-png.flaticon.com/512/1020/1020312.png red pin black outline
+//https://cdn-icons-png.flaticon.com/512/7828/7828824.png red marker small black line under  USE
+//https://cdn-icons-png.flaticon.com/512/7828/7828955.png red pin with open cirle under
+// 21 https://cdn-icons-png.flaticon.com/512/270/270814.png blue PS
+// 21 https://cdn-icons-png.flaticon.com/512/5202/5202316.png Blue pump
+// 20 https://cdn-icons-png.flaticon.com/512/6646/6646541.png blue W
+// 22 https://cdn-icons-png.flaticon.com/512/1686/1686585.png Water Tower
+// 23 https://cdn-icons-png.flaticon.com/512/7584/7584166.png Sewage pipe
+// https://cdn-icons-png.flaticon.com/512/1020/1020261.png pin black outline
+
+
+//var icon1url = "https://cdn-icons-png.flaticon.com/512/4668/4668400.png";
+
+//var icon2url = "https://cdn-icons-png.flaticon.com/512/2934/22.png";
+
+//var icon3url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+//var icon4url = "https://cdn-icons-png.flaticon.com/512/594/50.png";
+
+//var icon5url = "https://cdn-icons-png.flaticon.com/512/143/145.png";
+
+///var icon6url = "https://img.icons8.com/emoji/48/brown-circle-emoji.png";
+
+//var icon7url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+//var icon8url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+//var icon9url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+//var icon10url = "https://cdn-icons-png.flaticon.com/5/934/22.png";
+
+//var icon11url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+//var icon12url = "https://cdn-icons-png.flaticon.com/512/934/22.png";
+
+//var icon20url = "https://cdn-icons-png.flaticon.com/512/4668/4668400.png";
+
+//var icon21url = "https://cdn-icons-png.flaticon.com/512/4668/4668400.png";
+
+//var icon22url = "https://cdn-icons-png.flaticon.com/512/4668/4668400.png";
+
+//var icon23url = "https://cdn-icons-png.flaticon.com/512/1020/1020261.png";
+
+//var icon24url = "https://cdn-icons-png.flaticon.com/512/1020/1020261.png";
+
+//var icon25url = "https://cdn-icons-png.flaticon.com/512/1020/10261.png";
+
+//var icon26url = "https://cdn-icons-png.flaticon.com/512/1061.png";
+
+//var icon27url = "https://cdn-icons-png.flaticon.com/512/1020/101.png";
+
+//var icon28url = "https://cdn-icons-png.flaticon.com/512/8804/8804765.png";
+// https://cdn-icons-png.flaticon.com/512/595/595005.png  plain red circle
+// purple circle https://cdn-icons-png.flaticon.com/512/7291/7291014.png
+// https://cdn-icons-png.flaticon.com/512/6594/6594848.png red circle default
+// https://cdn-icons-png.flaticon.com/512/5112/5112744.png  orange
+// dark orange https://cdn-icons-png.flaticon.com/512/8804/8804765.png
+
+//var icon29url = "https://cdn-icons-png.flaticon.com/512/594/594580.png";
+
+//var icon30url = "https://cdn-icons-png.flaticon.com/512/1783/16.png";
+
+//var icon31url = "https://cdn-icons-png.flaticon.com/512/1783/36.png";
+
+//var icon32url = "https://cdn-icons-png.flaticon.com/512/1783/36.png";
+
+
+//*********************
+
+//END OF ICON VARIABLES
+
+//icon programming refers to icon url linkls above, no need to change this section excpet for icon size, if required
+
+//var icon1 = L.icon({
+     //   iconUrl: icon1url,
+      //  iconSize: [18, 18]
+   // });
+
+//var icon2 = L.icon({
+ //       iconUrl: icon2url,
+  //      iconSize: [38, 10]
+ //   });
+/*
+var icon3 = L.icon({
+        iconUrl: icon3url,
+        iconSize: [3, 3]
+    });
+
+var icon4 = L.icon({
+        iconUrl: icon4url,
+        iconSize: [4, 4]
+    });
+
+var icon5 = L.icon({
+        iconUrl: icon5url,
+        iconSize: [20, 20]
+    });
+
+var icon6 = L.icon({
+        iconUrl: icon6url,
+        iconSize: [15, 15]
+    });
+
+//var icon7 = L.icon({
+   //     iconUrl: icon7url,
+     //   iconSize: [20, 20]
+    //});
+
+//var icon8 = L.icon({
+  //      iconUrl: icon8url,
+    //    iconSize: [20, 20]
+    //});
+
+//var icon9 = L.icon({
+   //     iconUrl: icon9url,
+  //    iconSize: [20, 20]
+    //});
+
+var icon10 = L.icon({
+        iconUrl: icon10url,
+        iconSize: [20, 20]
+    });
+
+var icon11 = L.icon({
+        iconUrl: icon11url,
+        iconSize: [20, 20]
+    });
+
+//var icon12 = L.icon({
+  //      iconUrl: icon12url,
+    //    iconSize: [20, 20]
+    //});
+
+var icon20 = L.icon({
+        iconUrl: icon20url,
+        iconSize: [20, 20]
+    });
+
+var icon21 = L.icon({
+        iconUrl: icon21url,
+        iconSize: [20, 20]
+    });
+
+var icon22 = L.icon({
+        iconUrl: icon22url,
+        iconSize: [20, 20]
+    });
+
+var icon23 = L.icon({
+        iconUrl: icon23url,
+        iconSize: [20, 20]
+    });
+
+var icon24 = L.icon({
+        iconUrl: icon24url,
+        iconSize: [20, 20]
+    });
+
+var icon25 = L.icon({
+        iconUrl: icon25url,
+        iconSize: [20, 20]
+    });
+
+var icon26 = L.icon({
+        iconUrl: icon26url,
+        iconSize: [20, 20]
+    });
+
+var icon27 = L.icon({
+        iconUrl: icon27url,
+        iconSize: [20, 20]
+    });
+
+var icon28 = L.icon({
+        iconUrl: icon28url,
+        iconSize: [15, 15]
+    });
+
+var icon29 = L.icon({
+        iconUrl: icon29url,
+        iconSize: [10, 10]
+    });
+
+var icon30 = L.icon({
+        iconUrl: icon30url,
+        iconSize: [15, 15]
+    });
+
+var icon31 = L.icon({
+        iconUrl: icon31url,
+        iconSize: [15, 15]
+    });
+
+var icon32 = L.icon({
+        iconUrl: icon32url,
+        iconSize: [15, 15]
+    });
+
+*/
+
+
+/*
+//create markers at lat/long with list of icons above, no need to change this code
+function getOneMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon1
+  });
+}
+
+//function getTwoMarker(feature, latlng) {
+  //return L.marker(latlng, {
+    //icon: icon2
+  //});
+//}
+
+function getThreeMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon3
+  });
+}
+
+function getFourMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon4
+  });
+}
+
+function getFiveMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon5
+  });
+}
+
+function getSixMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon6
+  });
+}
+
+//function getSevenMarker(feature, latlng) {
+  //return L.marker(latlng, {
+    //icon: icon7
+  //});
+//}
+
+//function getEightMarker(feature, latlng) {
+  //return L.marker(latlng, {
+    //icon: icon8
+  //});
+//}
+
+//function getNineMarker(feature, latlng) {
+  //return L.marker(latlng, {
+    //icon: icon9
+  //});
+//}
+
+function getTenMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon10
+  });
+}
+
+function getElevenMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon11
+  });
+}
+
+//function getTwelveMarker(feature, latlng) {
+ // return L.marker(latlng, {
+ //   icon: icon12
+ // });
+//}
+
+function getTwentyMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon20
+  });
+}
+
+function getTwentyOneMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon21
+  });
+}
+
+function getTwentyTwoMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon22
+  });
+}
+
+function getTwentyThreeMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon23
+  });
+}
+
+function getTwentyFourMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon24
+  });
+}
+
+function getTwentyFiveMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon25
+  });
+}
+
+function getTwentySixMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon26
+  });
+}
+
+function getTwentySevenMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon27
+  });
+}
+
+function getTwentyEightMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon28
+  });
+}
+
+function getTwentyNineMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon29
+  });
+}
+
+function getThirtyMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon30
+  });
+}
+
+function getThirtyOneMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon31
+  });
+}
+
+function getThirtyTwoMarker(feature, latlng) {
+  return L.marker(latlng, {
+    icon: icon32
+  });
+}
+
+*/
+//*************** POP-UPS TRENARY CODE AREA BELOW************************
+
+//review your GeoJson data to figure out the column names, addd to list below if required.  
+//attach popups to the markers reading in geojson properties, excluding those with no information or 'undefined' via trenary operation. Pop-ups will only have information that exists and no 'undefined' text, looks cleaner and less cluttered. The source geojsons from Niagara OpenData are not all identical feature properties, so I examined them to determine which properties to parse. Trenary operations account for all of the feature properties that I want displayed in pop-up, and omit blanks or null.
+	
+
+function getPopup(feature, layer) {
+
+var popupText = ''
+;
+popupText += (feature.properties.Well_ID) ? '<b>Well ID: </b> ' + feature.properties.Well_ID : '';
+
+popupText += (feature.properties.Monitoring_Frequency) ? '<br>Monitoring Frequency: ' + feature.properties.Monitoring_Frequency : '';
+
+popupText += (feature.properties.Casing_Material) ? '<br><br>Casing Material:  ' + feature.properties.Casing_Material : '';
+
+popupText += (feature.properties.Screen_Type) ? '<br>Screen Type:  ' + feature.properties.Screen_Type : '';
+
+popupText += (feature.properties.Construction_Date_ddmmyyyy) ? '<br>Construction Date: ' + feature.properties.Construction_Date_ddmmyyyy : '';
+
+
+popupText += (feature.properties.NAME) ? ' ' + feature.properties.NAME : '';
+
+popupText += (feature.properties.NAME_ENG) ? ' ' + feature.properties.NAME_ENG : '';
+
+popupText += (feature.properties.Name) ? '<b>Plant: </b> ' + feature.properties.Name : '';
+
+popupText += (feature.properties.System_Name) ? '<b>System: <br></b> ' + feature.properties.System_Name : '';
+
+popupText += (feature.properties.Owner_Name) ? '<b><br><br>Owner: </b> ' + feature.properties.Owner_Name : '';
+
+popupText += (feature.properties.AREA_NAME) ? ' ' + feature.properties.AREA_NAME : '';
+
+popupText += (feature.properties.CA_Name) ? '<b>' + feature.properties.CA_Name : '';
+
+popupText += (feature.properties.FACILITY_N) ? '<b>Facility: </b>' + feature.properties.FACILITY_N : '';
+
+popupText += (feature.properties.Company_Name) ? '<b>Company: </b>' + feature.properties.Company_Name : '';
+
+popupText += (feature.properties.Facility_Name) ? '<br>Facility: ' + feature.properties.Facility_Name : '';
+
+popupText += (feature.properties.Facility_N) ? '<b>Facility: </b> ' + feature.properties.Facility_N : '';
+
+popupText += (feature.properties.Owner) ? '<br><br>Owner: ' + feature.properties.Owner : '';
+popupText += (feature.properties.City) ? '<br>City: ' + feature.properties.City : '';
+
+//popupText += (feature.properties.USER_Site_) ? '<b>Facility: </b>' + feature.properties.USER_Site_ : '';
+
+popupText += (feature.properties.Average) ? '<br>Average Discharge Volume (m3/day): ' + feature.properties.Average : '';
+
+popupText += (feature.properties.Treatment) ? '<br><br>Treatment: ' + feature.properties.Treatment : '';
+
+
+popupText += (feature.properties.Other_Trea) ? '<br><br>Other info: ' + feature.properties.Other_Trea : '';
+
+
+popupText += (feature.properties.ww_dws_nam) ? '<b>Facility: </b> ' + feature.properties.ww_dws_nam.toUpperCase() : '';
+
+popupText += (feature.properties.owner_lega) ? '<br><br>Owner: ' + feature.properties.owner_lega : '';
+
+popupText += (feature.properties.ww_facilit) ? '<br>Address: ' + feature.properties.ww_facilit : '';
+
+popupText += (feature.properties.receiving_) ? '<br><br>Receiving Watercourse:<br> ' + feature.properties.receiving_ : '';
+
+
+
+popupText += (feature.properties.Address) ? '<br><br>Address: ' + feature.properties.Address : '';
+
+//popupText += (feature.properties.USER_Site1) ? '<br><br>Type: ' + feature.properties.USER_Site1 : '';
+
+popupText += (feature.properties.USER_DWS_N) ? '<br><br>DWS Name: ' + feature.properties.USER_DWS_N : '';
+
+popupText += (feature.properties.USER_DWS_1) ? '<br>DWS #: ' + feature.properties.USER_DWS_1 : '';
+
+popupText += (feature.properties.Address_short) ? '<br>' + feature.properties.Address_short : '';
+
+popupText += (feature.properties.Municipality) ? ', ' + feature.properties.Municipality : '';
+
+popupText += (feature.properties.County) ? '<br>' + feature.properties.County : '';
+
+popupText += (feature.properties.ADMINISTRA) ? '<br><br>Catchment: ' + feature.properties.ADMINISTRA : '';
+
+popupText += (feature.properties.OPERATIONA) ? '<br>Operations Zone: ' + feature.properties.OPERATIONA : '';
+
+popupText += (feature.properties.STREET_NUM) ? '<br> ' + feature.properties.STREET_NUM : '';
+
+popupText += (feature.properties.USER_Stree) ? '<br>Address: ' + feature.properties.USER_Stree : '';
+
+popupText += (feature.properties.USER_Str_1) ? ' ' + feature.properties.USER_Str_1 : '';
+
+popupText += (feature.properties.USER_Str_2) ? ' ' + feature.properties.USER_Str_2 : '';
+
+popupText += (feature.properties.STREET_NAM) ? ' ' + feature.properties.STREET_NAM : '';
+
+popupText += (feature.properties.SUFFIX) ? ' ' + feature.properties.SUFFIX : '';
+
+popupText += (feature.properties.MUNICIPALI) ? '<br>' + feature.properties.MUNICIPALI : '';
+
+popupText += (feature.properties.USER_City) ? ', ' + feature.properties.USER_City : '';
+
+//popupText += (feature.properties.City) ? '<br>City: ' + feature.properties.City : '';
+
+popupText += (feature.properties.USER_Regio) ? '<br>Region: ' + feature.properties.USER_Regio : '';
+
+//popupText += (feature.properties.OBJECTID) ? '<br>Number: ' + feature.properties.OBJECTID : '';
+
+popupText += (feature.properties.MATERIAL) ? '<br>Material: ' + feature.properties.MATERIAL : '';
+
+popupText += (feature.properties.DIAMETER) ? '<br>Diameter (mm): ' + feature.properties.DIAMETER : '';
+
+popupText += (feature.properties.Treatment_type) ? '<br><br>Treatment: ' + feature.properties.Treatment_type : '';
+
+popupText += (feature.properties.ECA) ? '<br>ECA: ' + feature.properties.ECA : '';
+
+
+
+popupText += (feature.properties.NAME3) ? '<b>Watershed(s): </b> ' + feature.properties.NAME3 : '';
+
+popupText += (feature.properties.NAME4) ? '<br> ' + feature.properties.NAME4 : '';
+
+popupText += (feature.properties.NAME5) ? '<br> ' + feature.properties.NAME5 : '';
+
+popupText += (feature.properties.NAME_2) ? '<br>SP Area: ' + feature.properties.NAME_2 : '';
+
+popupText += (feature.properties.NAME_3) ? '<br>SP Region: ' + feature.properties.NAME_3 : '';
+
+popupText += (feature.properties.OFFICIAL_M) ? '<br>Municipality: ' + feature.properties.OFFICIAL_M : '';
+
+popupText += (feature.properties.UPPER_TI_1) ? '<br>Region: ' + feature.properties.UPPER_TI_1 : '';
+
+popupText += (feature.properties.Inspector) ? '<br><br><b>Inspector: </b>' + feature.properties.Inspector : '';
+popupText += (feature.properties.INSPECTOR) ? '<br><br><b>Inspector: </b>' + feature.properties.INSPECTOR : '';
+
+popupText += (feature.properties.TOTAL_ALL_RELEASES) ? '<br><br><b>Total Releases (t): </b>' + feature.properties.TOTAL_ALL_RELEASES : '';
+
+popupText += (feature.properties.USER_City) ? ', ' + feature.properties.USER_City : '';
+
+//popupText += (feature.properties.TORDW) ? '<br><br>Toronto DW: ' + feature.properties.TORDW : '';
+
+//popupText += (feature.properties.TORWW) ? '<br><br>Toronto WW: ' + feature.properties.TORWW : '';
+
+popupText += (feature.properties.Towns) ? '<br><br>Other Locales: ' + feature.properties.Towns : '';
+
+popupText += (feature.properties.VSAFIELD_N) ? '<br>Wellhead Protection Zone: ' + feature.properties.VSAFIELD_N : '';
+
+popupText += (feature.properties.ZONENAME) ? '<br>Zone ID: ' + feature.properties.ZONENAME : '';
+
+popupText += (feature.properties.LT_MUNI_LA) ? '<br><br>Municipality: ' + feature.properties.LT_MUNI_LA : '';
+
+popupText += (feature.properties.INTAKE_NAM) ? '<br>Intake Name: ' + feature.properties.INTAKE_NAM : '';
+
+popupText += (feature.properties.Daily_Effluent) ? '<br>Average Daily Effluent(m3): ' + feature.properties.Daily_Effluent : '';
+
+
+popupText += (feature.properties.IPZTYPE) ? '<br>IPZ Type (1/2): ' + feature.properties.IPZTYPE : '';
+
+popupText += (feature.properties.VULNERABIL) ? '<br>Vulnerability Score: ' + feature.properties.VULNERABIL : '';
+
+popupText += (feature.properties.DWS_NAME) ? '<br>DWS Name (Intake): <br><u><b>' + feature.properties.DWS_NAME : '';
+
+popupText += (feature.properties.DWIS_Name) ? '<br>DWS Name: <br><u><b>' + feature.properties.DWIS_Name : '';
+
+popupText += (feature.properties.WaterSyste) ? '</u></b><br><br>More Info: ' + feature.properties.WaterSyste : '';
+
+popupText += (feature.properties.WTP_Name) ? '</u></b><br>Well Name: ' + feature.properties.WTP_Name : '';
+
+popupText += (feature.properties.WellIdenti) ? '</u></b><br><br>More Info: ' + feature.properties.WellIdenti : '';
+
+popupText += (feature.properties.DWIS_NO) ? '<br>DWS #: ' + feature.properties.DWIS_NO : '';
+
+popupText += (feature.properties.IPZType) ? '<br><b>Intake Protection Zone (1-2): ' + feature.properties.IPZType : '';
+
+popupText += (feature.properties.ZoneName) ? '<br>Wellhead Protection Zone (A->D): ' + feature.properties.ZoneName : '';
+
+popupText += (feature.properties.NPRI_ID) ? '<br>NPRI_ID: ' + feature.properties.NPRI_ID : '';
+
+//popupText += (feature.properties.Phone) ? '</b><br><br>Phone: ' + feature.properties.Phone : '';
+
+popupText += (feature.properties.PHONE) ? '</b><br><br>Phone: <a href="tel:' + feature.properties.PHONE + '">' + feature.properties.PHONE + '</a>' : '';
+
+
+popupText += (feature.properties.Phone) ? '</b><br><br>Phone: <a href="tel:' + feature.properties.Phone + '">' + feature.properties.Phone + '</a>' : '';
+
+popupText += (feature.properties.Phone2) ? '</b><br><br>After-Hours Phone: <a href="tel:' + feature.properties.Phone2 + '">' + feature.properties.Phone2 + '</a>' : '';
+
+//popupText += (feature.properties.Email) ? '<br>email: ' + feature.properties.Email : '';
+
+popupText += (feature.properties.Email) ? '<br>email: <a href="mailto:' + feature.properties.Email + '">' + feature.properties.Email + '</a>' : '';
+
+popupText += (feature.properties.email) ? '<br>Email: <a href="mailto:' + feature.properties.email + '">' + feature.properties.email + '</a>' : '';
+
+
+popupText += (feature.properties.Website) ? ' ' + feature.properties.Website : '';
+
+popupText += (feature.properties.URL) ? '<br>' + feature.properties.URL : '';
+
+popupText += (feature.properties.DESIGNATION) ? 'Protected Area Designation:<br> <b>' + feature.properties.DESIGNATION : '';
+
+popupText += (feature.properties.Treatment_Types) ? '<br><br>Treatment:<br>' + feature.properties.Treatment_Types : '';
+
+
+// "STREET_NUM":"725","STREET_NAM":"Lakeshore","SUFFIX":"Road","DIRECTION":"","P_O_BOX":"","MUNICIPALI":"Fort Erie",
+
+//feeding trenary results through a replace function in order to format URLs into proper clickable hyperlinks in the popups
+//if they have URLs in the geojson properties, will pull in as a hyperlink but does not ensure the link is working on their other end
+// no need to change this code section
+
+var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+var replacedText = (popupText).replace(replacePattern1, '<br><a href="$1" target="_blank">website</a>');
+
+
+layer.bindPopup(replacedText);
+}
+
+//****************END POP-UPS CODE SECTION*********************
+
+
+
+//}
+//this section creates empty GeoJSON layers to be populated later
+//no need to change this code unless you want the layer to be NOT VISIBLE by DEFAULT, add // to any layer at "})//.addTo(map);" (layer5 is turned off here)
+// this will make the layer visible by clicking on the legend checkbox
+
+
+/*
+var oneLayer = L.geoJson(false, {
+    pointToLayer: getOneMarker,
+    onEachFeature: getPopup
+    //color: "#ed4d4d"
+    //color: "#0000FF",
+}).addTo(map);
+
+//var twoLayer = L.geoJson(false, {
+    //pointToLayer: getTwoMarker,
+   // onEachFeature: getPopup,
+    //color: "#ed4d4d"
+   // color: "#0000FF"
+//}).addTo(map);
+
+//var threeLayer = L.geoJson(false, {
+  // pointToLayer: getThreeMarker,
+  // onEachFeature: getPopup,
+  //color: "#4ADEDE"
+ // color: "#FF0000"
+//})//.addTo(map);
+
+var threeLayer = L.geoJSON(geoJson3, {
+    onEachFeature: getPopup,
+    style: function(feature) {
+        switch (feature.properties.NAME3) {
+            case 'Humber River - Don River': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'Kawartha Lakes': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'North Lake Ontario Shoreline': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'Nottawasaga River': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'Otonabee River': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'Scugog River': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'Severn River - Lake Simcoe': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'Sixteen Mile Creek - Credit River': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'West Lake Ontario Shoreline': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            case 'West Lake Ontario': return {color: "#212121", weight: 1, fillOpacity: 0.3};
+            }
+    }
+})//.addTo(map);
+
+
+var fourLayer = L.geoJSON(geoJson4, {
+    onEachFeature: getPopup,
+    style: function(feature) {
+        switch (feature.properties.CA_Name) {
+            case 'Central Lake Ontario Conservation Authority': return {color: "#ffffb2", weight: 2, fillOpacity: 0.5};
+            case 'Conservation Halton': return {color: "#FFD700", weight: 2, fillOpacity: 0.5};
+            case 'Credit Valley Conservation': return {color: "#e31a1c", weight: 2, fillOpacity: 0.5};
+            case 'Ganaraska Region Conservation Authority': return {color: "#808000", weight: 2, fillOpacity: 0.5};
+            case 'Hamilton Conservation Authority': return {color: "#ff8b3d", weight: 2, fillOpacity: 0.5};
+            case 'Kawartha Conservation': return {color: "#8F00FF", weight: 2, fillOpacity: 0.5};
+            case 'Lake Simcoe Region Conservation Authority': return {color: "#008080", weight: 2, fillOpacity: 0.5};
+            case 'Otonabee Conservation': return {color: "#e31a1c", weight: 2, fillOpacity: 0.5};
+            case 'Toronto And Region Conservation Authority': return {color: "#00008B", weight: 2, fillOpacity: 0.5};
+                       }
+    }
+})//.addTo(map);
+//var fourLayer = L.geoJson(false, {
+  // pointToLayer: getFourMarker,
+  // onEachFeature: getPopup,
+   //color: "#ffa500"
+   //color: "#e6550d" 
+//})//.addTo(map);
+
+var fiveLayer = L.geoJson(false, {
+    pointToLayer: getFiveMarker,
+    onEachFeature: getPopup,
+    weight: 1,
+    fillOpacity: 0.3,
+    color: "#228B22" 
+    //color: "#005C46"
+})//.addTo(map);
+
+var sixLayer = L.geoJson(false, {
+    pointToLayer: getSixMarker,
+    onEachFeature: getPopup
+    //color: "#FF0000"
+})//.addTo(map);
+
+//var sevenLayer = L.geoJson(false, {
+  //  pointToLayer: getSevenMarker,
+    //onEachFeature: getPopup,
+    //color: "#2b8cbe"
+//})//.addTo(map);
+
+//var eightLayer = L.geoJson(false, {
+  //  pointToLayer: getEightMarker,
+    //onEachFeature: getPopup,
+    //color: "#FFFF00"
+//})//.addTo(map);
+
+//var nineLayer = L.geoJson(false, {
+  //  pointToLayer: getNineMarker,
+    //onEachFeature: getPopup,
+  //  color: "#c51b8a"
+//})//.addTo(map);
+
+var tenLayer = L.geoJSON(false, {
+    onEachFeature: getPopup,
+    pointToLayer: function(feature, latlng) {
+        // Determine the radius of the circle
+        // You might want to adjust the calculation depending on the range of "Total_All_Releases"
+        var radius = Math.sqrt(feature.properties.Daily_Effluent) * scaleFactor2; // scaleFactor to adjust size visually
+
+        return L.circleMarker(latlng, {
+            radius: radius,
+            fillColor: "#a52a2a",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.6
+        });
+    }
+}); //.addTo(map);
+
+// Example of setting a scaleFactor based on your data's range and desired visual representation
+// This is just a placeholder value; you'll need to adjust it based on your actual data
+var scaleFactor2 = 0.07;
+
+//var tenLayer = L.geoJson(false, {
+  //  pointToLayer: getTenMarker,
+    //onEachFeature: getPopup,
+    //color: "#31a354" greens
+    //color: "#009B77"
+    //color: "#005C46" emerald darker
+    //color: "#e6550d"
+//})//.addTo(map);
+
+var elevenLayer = L.geoJson(false, {
+    pointToLayer: getElevenMarker,
+    onEachFeature: getPopup,
+    color: "#AA4A44"
+})//.addTo(map);
+
+//var twelveLayer = L.geoJson(false, {
+    //pointToLayer: getTwelveMarker,
+   // onEachFeature: getPopup,
+   // color: "#0000FF"
+//}).addTo(map);
+
+
+//var twentyLayer = L.geoJSON(geoJson20, {
+  //  onEachFeature: getPopup,
+  //  style: function(feature) {
+       // switch (feature.properties.ZoneName) {
+         //   case 'D': return {color: "#ffffb2", weight: 5, fillOpacity: 0.7};
+         //   case 'C': return {color: "#fecc5c", weight: 5, fillOpacity: 0.7};
+         //   case 'C1': return {color: "#fecc5c", weight: 5, fillOpacity: 0.7};
+         //   case 'B': return {color: "#fd8d3c", weight: 5, fillOpacity: 0.7};
+         //   case 'A': return {color: "#e31a1c", weight: 5, fillOpacity: 0.7};
+      //  }
+   // }
+//})//.addTo(map);
+
+//*************************LAYERS CODE START********************************************************
+
+
+// Step 1: Create the layer group and add it to the map
+var twentyLayerGroup = L.layerGroup().addTo(map);
+
+// Step 2: Function to handle each feature for the twentyLayer
+function onEachFeatureTwenty(feature, layer) {
+    getPopup(feature, layer);
+
+    // Calculate the approximate centroid of the polygon for the label
+    var centroid = layer.getBounds().getCenter();
+
+    // Create a label at the centroid
+    var label = L.marker(centroid, {
+        icon: L.divIcon({
+            className: 'custom-label-twenty',
+            html: feature.properties.INSPECTOR,
+            iconSize: [15, 12]
+        })
+    });
+
+    // Add both the layer and the label to the layer group
+    twentyLayerGroup.addLayer(layer).addLayer(label);
+}
+
+// Step 3: Create the twentyLayer
+var twentyLayer = L.geoJson(geoJson20, {
+    onEachFeature: onEachFeatureTwenty,
+    style: {
+        weight: 2,
+        fillOpacity: 0.2,
+        color: "#FFFF00"
+    }
+});
+
+
+//var twentyLayer = L.geoJson(false, {
+  //  pointToLayer: getTwentyMarker,
+  //  onEachFeature: getPopup,
+    //color: "#ed4d4d"
+ //   weight: 2,
+   // color: "#FFFF00"
+//}).addTo(map);
+
+//**********************************************
+// Function to handle each feature for the twentyoneLayer
+// Step 1: Create the layer group and add it to the map
+var twentyoneLayerGroup = L.layerGroup().addTo(map);
+
+// Step 2: Function to handle each feature for the twentyLayer
+function onEachFeatureTwentyone(feature, layer) {
+    getPopup(feature, layer);
+
+    // Calculate the approximate centroid of the polygon for the label
+    var centroid = layer.getBounds().getCenter();
+
+    // Create a label at the centroid
+    var label = L.marker(centroid, {
+        icon: L.divIcon({
+            className: 'custom-label-twentyone',
+            html: feature.properties.INSPECTOR,
+            iconSize: [15, 12]
+        })
+    });
+
+    // Add both the layer and the label to the layer group
+    twentyoneLayerGroup.addLayer(layer).addLayer(label);
+}
+
+// Step 3: Create the twentyLayer
+var twentyoneLayer = L.geoJson(geoJson21, {
+    onEachFeature: onEachFeatureTwentyone,
+    style: {
+        weight: 2,
+        fillOpacity: 0.2,
+        color: "#710096"
+    }
+});
+
+
+
+//var twentyoneLayer = L.geoJson(false, {
+  //  pointToLayer: getTwentyOneMarker,
+   // onEachFeature: getPopup,
+    //color: "#ed4d4d"
+   // weight: 2,
+    //color: "#710096"
+//}).addTo(map);
+//*****************************************************************
+
+// Step 1: Create the layer group and add it to the map
+var twentytwoLayerGroup = L.layerGroup().addTo(map);
+
+// Step 2: Function to handle each feature for the twentyLayer
+function onEachFeatureTwentytwo(feature, layer) {
+    getPopup(feature, layer);
+
+    // Calculate the approximate centroid of the polygon for the label
+    var centroid = layer.getBounds().getCenter();
+
+    // Create a label at the centroid
+    var label = L.marker(centroid, {
+        icon: L.divIcon({
+            className: 'custom-label-twentytwo',
+            html: feature.properties.INSPECTOR,
+            iconSize: [15, 12]
+        })
+    });
+
+    // Add both the layer and the label to the layer group
+    twentytwoLayerGroup.addLayer(layer).addLayer(label);
+}
+
+// Step 3: Create the twentyLayer
+var twentytwoLayer = L.geoJson(geoJson22, {
+    onEachFeature: onEachFeatureTwentytwo,
+    style: {
+        weight: 2,
+        fillOpacity: 0.2,
+        color: "#00FF00"
+    }
+});
+
+
+
+//var twentytwoLayer = L.geoJson(false, {
+  //  pointToLayer: getTwentyTwoMarker,
+ //   onEachFeature: getPopup,
+  //  weight: 2,
+    //color: "#ed4d4d"
+    //color: "#00FF00"
+//}).addTo(map);
+//****************************************************************
+// Step 1: Create the layer group and add it to the map
+var twentythreeLayerGroup = L.layerGroup().addTo(map);
+
+// Step 2: Function to handle each feature for the twentyLayer
+function onEachFeatureTwentythree(feature, layer) {
+    getPopup(feature, layer);
+
+    // Calculate the approximate centroid of the polygon for the label
+    var centroid = layer.getBounds().getCenter();
+
+    // Create a label at the centroid
+    var label = L.marker(centroid, {
+        icon: L.divIcon({
+            className: 'custom-label-twentythree',
+            html: feature.properties.INSPECTOR,
+            iconSize: [15, 12]
+        })
+    });
+
+    // Add both the layer and the label to the layer group
+    twentythreeLayerGroup.addLayer(layer).addLayer(label);
+}
+
+// Step 3: Create the twentyLayer
+var twentythreeLayer = L.geoJson(geoJson23, {
+    onEachFeature: onEachFeatureTwentythree,
+    style: {
+        weight: 2,
+        fillOpacity: 0.2,
+        color: "#FF6600"
+    }
+});
+
+//var twentythreeLayer = L.geoJson(false, {
+  //  pointToLayer: getTwentyThreeMarker,
+  //  onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    //weight: 2,
+    //color: "#FF6600"
+//}).addTo(map);
+
+//*********************************************************
+
+// Step 1: Create the layer group and add it to the map
+var twentyfourLayerGroup = L.layerGroup().addTo(map);
+
+// Step 2: Function to handle each feature for the twentyLayer
+function onEachFeatureTwentyfour(feature, layer) {
+    getPopup(feature, layer);
+
+    // Calculate the approximate centroid of the polygon for the label
+    var centroid = layer.getBounds().getCenter();
+
+    // Create a label at the centroid
+    var label = L.marker(centroid, {
+        icon: L.divIcon({
+            className: 'custom-label-twentyfour',
+            html: feature.properties.INSPECTOR,
+            iconSize: [15, 12]
+        })
+    });
+
+    // Add both the layer and the label to the layer group
+    twentyfourLayerGroup.addLayer(layer).addLayer(label);
+}
+
+// Step 3: Create the twentyLayer
+var twentyfourLayer = L.geoJson(geoJson24, {
+    onEachFeature: onEachFeatureTwentyfour,
+    style: {
+        weight: 2,
+        fillOpacity: 0.2,
+        color: "#FF0000"
+    }
+});
+
+
+//var twentyfourLayer = L.geoJson(false, {
+  //  pointToLayer: getTwentyFourMarker,
+  //  onEachFeature: getPopup,
+    //color: "#ed4d4d"
+  //  weight: 2,
+ //   color: "#FF0000"
+//}).addTo(map);
+//*****************************************************************************
+
+
+
+var twentyfiveLayer = L.geoJson(false, {
+    pointToLayer: getTwentyFiveMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    weight: 2,
+    color: "#808080"
+})//.addTo(map);
+
+var twentysixLayer = L.geoJson(false, {
+    pointToLayer: getTwentySixMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d",
+    color: "#FF0500",
+    weight: 1.5,
+    fillOpacity: 0.15
+    //color: "#0000FF"
+})//.addTo(map);
+//************************NPRI*******************
+
+var twentysevenLayer = L.geoJSON(false, {
+    onEachFeature: getPopup,
+    pointToLayer: function(feature, latlng) {
+        // Determine the radius of the circle
+        // You might want to adjust the calculation depending on the range of "Total_All_Releases"
+        var radius = Math.sqrt(feature.properties.TOTAL_ALL_RELEASES) * scaleFactor; // scaleFactor to adjust size visually
+
+        return L.circleMarker(latlng, {
+            radius: radius,
+            fillColor: "#ff7800",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+        });
+    }
+}); //.addTo(map);
+
+// Example of setting a scaleFactor based on your data's range and desired visual representation
+// This is just a placeholder value; you'll need to adjust it based on your actual data
+var scaleFactor = 0.2;
+
+// Don't forget to add the layer to your map
+// threeLayer.addTo(map);
+
+
+
+
+
+
+
+//**********************************************
+//var twentysevenLayer = L.geoJson(false, {
+  //  pointToLayer: getTwentySevenMarker,
+    //onEachFeature: getPopup,
+    //color: "#ed4d4d"
+   // color: "#D2691E"
+//})//.addTo(map);
+
+var twentyeightLayer = L.geoJson(false, {
+    pointToLayer: getTwentyEightMarker,
+    onEachFeature: getPopup
+    //color: "#ed4d4d"
+    //color: "#D2691E"
+})//.addTo(map);
+
+
+var twentynineLayer = L.geoJson(false, {
+    pointToLayer: getTwentyNineMarker,
+    onEachFeature: getPopup
+    //color: "#ed4d4d"
+    //color: "#D2691E"
+})//.addTo(map);
+
+var thirtyLayer = L.geoJson(false, {
+    pointToLayer: getThirtyMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#0000FF"
+})//.addTo(map);
+
+var thirtyoneLayer = L.geoJson(false, {
+    pointToLayer: getThirtyOneMarker,
+    onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    color: "#40E0D0"
+})//.addTo(map);
+
+
+
+var thirtytwoLayer = L.geoJSON(geoJson32, {
+    onEachFeature: getPopup,
+    style: function(feature) {
+        switch (feature.properties.ZoneName) {
+            case 'D': return {color: "#ffffb2", weight: 5, fillOpacity: 0.7};
+            case 'C': return {color: "#fecc5c", weight: 5, fillOpacity: 0.7};
+            case 'C1': return {color: "#fecc5c", weight: 5, fillOpacity: 0.7};
+            case 'B': return {color: "#fd8d3c", weight: 5, fillOpacity: 0.7};
+            case 'A': return {color: "#e31a1c", weight: 5, fillOpacity: 0.7};
+        }
+    }
+})//.addTo(map);
+
+// colorbrewer array ['#ffffb2','#fecc5c','#fd8d3c','#e31a1c']
+
+//var thirtytwoLayer = L.geoJson(false, {
+  //  pointToLayer: getThirtyTwoMarker,
+    //onEachFeature: getPopup,
+    //color: "#ed4d4d"
+    //color: "#964B00"
+//})//.addTo(map);
+
+
+
+//Used for Legend Dividers only - empty layers
+var zeroLayer = L.geoJson(false, {
+    });
+var zero1Layer = L.geoJson(false, {
+    });
+var zero2Layer = L.geoJson(false, {
+    });
+var zero3Layer = L.geoJson(false, {
+    });
+
+var zero4Layer = L.geoJson(false, {
+    });
+//*************
+
+//*** GEOJSON LAYERS CODE BELOW**********
+
+
+//var imageUrl = 'https://raw.githubusercontent.com/sean-roelofsen/ENV_GIS/main/PopulationDensitySouthernOntario.png',
+    //imageBounds = [[50.9537, 5.6988], [50.994, 5.7792]];
+   // imageBounds = [[41.660638,-90.500848], [47.150108, -74.340156]];
+
+//var fiftyLayer = L.imageOverlay(imageUrl, imageBounds, {opacity:0.9});   
+
+//https://raw.githubusercontent.com/sean-roelofsen/ENV_GIS/main/popdensity_legend.png
+
+//var image2Url = 'https://raw.githubusercontent.com/sean-roelofsen/ENV_GIS/main/popdensity_legend.png',
+    //imageBounds = [[50.9537, 5.6988], [50.994, 5.7792]];
+  //  image2Bounds = [[42.032,-78.54], [42.828, -77.476]];
+
+//var fiftyoneLayer = L.imageOverlay(image2Url, image2Bounds, {opacity:1});  
+
+//var fiftyLayerGroup = L.layerGroup([fiftyLayer, fiftyoneLayer]);
+
+*/
+
+
+//change your geojson urls here!  Add more, remove, make null with // before code line
+//simply copy/paste the external GeoJson source url into the proper location
+
+/*
+var geoJson1 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/WTPs.geojson";
+
+
+
+//var geoJson25 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/WTPs.geojson";
+
+
+//var geoJson2 = "https://raw.githubusercontent.com/sean-roelofsen/OwenSoundWW/main/OSWatersheds.geojson";
+
+var geoJson3 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/CRWatersheds.geojson";
+
+var geoJson4 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/CABoundary.geojson";
+
+var geoJson5 = "https://ws.lioservices.lrc.gov.on.ca/arcgis1071a/rest/services/LIO_OPEN_DATA/LIO_Open06/MapServer/15/query?outFields=*&where=1%3D1&f=geojson";
+
+var geoJson6 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/WW_CR_6.geojson";
+
+//var geoJson6 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/Regions.geojson";
+
+//var geoJson7 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/OtanabeeR.geojson";
+
+//var geoJson8 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/ScugogRiver.geojson";
+
+//var geoJson9 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/Severn-LSimcoe.geojson";
+//https://raw.githubusercontent.com/sean-roelofsen/ENV_GIS/main/WSER_ON.geojson
+var geoJson10 = "https://raw.githubusercontent.com/sean-roelofsen/ENV_GIS/main/WSER_ON.geojson";
+
+var geoJson11 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Simcoe.geojson";
+
+var geoJson20 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/TOEW.geojson";
+//https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Toronto2.geojson
+
+
+var geoJson21 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Durham.geojson";
+
+var geoJson22 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/York.geojson";
+
+var geoJson23 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Halton3.geojson";
+
+var geoJson24 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Peel3.geojson";
+
+var geoJson25 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/SPASFinal.geojson";
+
+var geoJson26 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/CRPHUs.geojson";
+
+var geoJson27 = "https://raw.githubusercontent.com/sean-roelofsen/ENV_GIS/main/NPRI_ON.geojson";
+
+var geoJson28 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/WTPIntakesHP-YD.geojson";
+
+var geoJson29 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/DWWellsHPYD.geojson";
+
+var geoJson30 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/IPZ-1.geojson";
+
+var geoJson31 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/IPZ-2.geojson";
+
+var geoJson32 = "https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/WellheadPAs3.geojson";
+
+//https://raw.githubusercontent.com/sean-roelofsen/ENV_GIS/main/NPRI_ON.geojson
+
+
+//var geoJson25 = "https://raw.githubusercontent.com/sean-roelofsen/Halton_Peel/main/HP-TO-SPAs.geojson";
+
+//  https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/CRPHUs.geojson
+
+
+//  https://niagaraopendata.ca/dataset/6002fae9-9892-4982-8d21-5f8078b416d0/resource/ad23e906-16a5-4f37-b647-7f019fd744da/download/rmonsanitarycatchmentarea.json
+
+*/
+
+
+//NO CHANGES NEEDED - the code below populates GeoJSON layers with data from files listed above, no need to change this code 
+
+/*
+$.getJSON(geoJson1, function(data) {
+    oneLayer.addData(data);
+});
+
+//$.getJSON(geoJson2, function(data) {
+  //  twoLayer.addData(data);
+//});
+
+$.getJSON(geoJson3, function(data) {
+    threeLayer.addData(data);
+});
+
+$.getJSON(geoJson4, function(data) {
+  fourLayer.addData(data);
+});
+
+$.getJSON(geoJson5, function(data) {
+    fiveLayer.addData(data);
+});
+
+$.getJSON(geoJson6, function(data) {
+    sixLayer.addData(data);
+});
+
+//$.getJSON(geoJson7, function(data) {
+  //  sevenLayer.addData(data);
+//});
+
+//$.getJSON(geoJson8, function(data) {
+   // eightLayer.addData(data);
+//});
+
+//$.getJSON(geoJson9, function(data) {
+  //  nineLayer.addData(data);
+//});
+
+$.getJSON(geoJson10, function(data) {
+    tenLayer.addData(data);
+});
+
+$.getJSON(geoJson11, function(data) {
+    elevenLayer.addData(data);
+});
+
+$.getJSON(geoJson20, function(data) {
+    twentyLayer.addData(data);
+});
+
+$.getJSON(geoJson21, function(data) {
+    twentyoneLayer.addData(data);
+});
+
+$.getJSON(geoJson22, function(data) {
+    twentytwoLayer.addData(data);
+});
+
+$.getJSON(geoJson23, function(data) {
+    twentythreeLayer.addData(data);
+});
+
+$.getJSON(geoJson24, function(data) {
+    twentyfourLayer.addData(data);
+});
+
+$.getJSON(geoJson25, function(data) {
+    twentyfiveLayer.addData(data);
+});
+
+$.getJSON(geoJson26, function(data) {
+    twentysixLayer.addData(data);
+});
+
+$.getJSON(geoJson27, function(data) {
+    twentysevenLayer.addData(data);
+});
+
+$.getJSON(geoJson28, function(data) {
+    twentyeightLayer.addData(data);
+});
+
+$.getJSON(geoJson29, function(data) {
+    twentynineLayer.addData(data);
+});
+
+$.getJSON(geoJson30, function(data) {
+    thirtyLayer.addData(data);
+});
+
+$.getJSON(geoJson31, function(data) {
+    thirtyoneLayer.addData(data);
+});
+
+$.getJSON(geoJson32, function(data) {
+    thirtytwoLayer.addData(data);
+});
+
+*/
+
+//************************Smithville Wells layers code********************
+
+//ANNUAL MONITORING*************
+function getOneMarker(feature, latlng) {
+  var iconColor = '#FFD43b'; // Define the icon color
+  var labelStyle = 'display: block; margin-top: -4px;'; // Default label style
+
+  // Adjust label position for specific Well_ID values
+ if (['5S14', '36S12', '52S14'].includes(feature.properties.Well_ID)) {
+  labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label above and to the left
+} else if (feature.properties.Well_ID === '34S12') {
+  labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label above and to the left
+  latlng = L.latLng(latlng.lat + 0.000015, latlng.lng - 0.000015); // Slightly offset the position to the left and up
+}
+
+var icon1 = L.divIcon({
+  className: '', // Set to an empty string to avoid default styles
+  html: '<div style="text-align: center;"><i style="color: ' + iconColor + ';" class="fas fa-circle"></i>' +
+        '<i style="color: black; position: absolute; font-size: 4px; top: 65%; left: 50%; transform: translate(-40%, -30%);" class="fas fa-circle"></i>' + // Adjusted black dot positioning
+        '<span style="' + labelStyle + ' color: ' + iconColor + '; text-shadow: ' +
+        '1px 1px 1px black, -1px -1px 1px black, 1px -1px 1px black, -1px 1px 1px black;">' + // Black outline
+        feature.properties.Well_ID + '</span></div>' // Add label with black outline and adjusted position
+});
+
+  return L.marker(latlng, {
+    icon: icon1
+  });
+}
+
+
+
+
+var oneLayer = L.geoJson(false, {
+    pointToLayer: getOneMarker,
+    onEachFeature: getPopup
+}).addTo(map);
+
+// Fetch the GeoJSON data and add it to the oneLayer
+var geojsonUrl1 = "https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/wells_annual.geojson";
+fetch(geojsonUrl1)
+  .then(response => response.json())
+  .then(data => {
+    oneLayer.addData(data);
+  })
+  .catch(error => console.error('Error fetching GeoJSON data:', error));
+
+
+//***************BIENNIAL MONITORING*************************
+  function getTwoMarker(feature, latlng) {
+  var iconColor = '#1bc03c'; // Define the icon color
+  var labelStyle = 'display: block; margin-top: -4px;'; // Default label style
+
+  // Adjust label position based on specific Well_ID values
+  if (feature.properties.Well_ID === '7S13') {
+    labelStyle = 'display: block; margin-left: -50px; margin-top: -10px;'; // Move label up and to the left
+} else if (feature.properties.Well_ID === '7D39') {
+    labelStyle = 'display: block; margin-top: -35px; margin-left: 10px;'; // Move label above and slightly to the right
+} else if (feature.properties.Well_ID === '7D26') {
+    labelStyle = 'display: block; margin-top: 2px; margin-left: 10px;'; // Move label slightly up and to the right
+    latlng = L.latLng(latlng.lat + 0.00002, latlng.lng - 0.00002); // Slightly offset the position of 7D26
+} else if (feature.properties.Well_ID === '37S11') {
+    labelStyle = 'display: block; margin-top: -30px; margin-left: -40px;'; // Move label to the left and above
+} else if (feature.properties.Well_ID === '35D34') {
+    labelStyle = 'display: block; margin-top: -10px; margin-left: -55px;'; // Move label to the left
+} else if (feature.properties.Well_ID === '36D18') {
+    labelStyle = 'display: block; margin-top: -15px; margin-left: 20px;'; // Move label to the right and up a bit
+}
+
+
+
+
+
+  var icon2 = L.divIcon({
+    className: '', // Set to an empty string to avoid default styles
+    html: '<div style="text-align: center;"><i style="color: ' + iconColor + ';" class="fas fa-circle"></i>' +
+          '<i style="color: black; position: absolute; font-size: 4px; top: 65%; left: 50%; transform: translate(-40%, -30%);" class="fas fa-circle"></i>' + // Adjusted black dot positioning
+          '<span style="' + labelStyle + ' color: ' + iconColor + '; text-shadow: ' +
+          '1px 1px 1px black, -1px -1px 1px black, 1px -1px 1px black, -1px 1px 1px black;">' + // Black outline
+          feature.properties.Well_ID + '</span></div>' // Add label with black outline and adjusted position
+  });
+
+  return L.marker(latlng, {
+    icon: icon2
+  });
+}
+
+
+
+
+var twoLayer = L.geoJson(false, {
+    pointToLayer: getTwoMarker,
+    onEachFeature: getPopup
+}).addTo(map);
+
+// Fetch the GeoJSON data and add it to the twoLayer
+var geojsonUrl2 = "https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/wells_biennial.geojson";
+fetch(geojsonUrl2)
+  .then(response => response.json())
+  .then(data => {
+    twoLayer.addData(data);
+  })
+  .catch(error => console.error('Error fetching GeoJSON data:', error));
+
+
+
+//*********REMOVE FROM PROGRAM***********
+
+function getThreeMarker(feature, latlng) {
+  var iconColor = '#df1130'; // Define the icon color
+  var labelStyle = 'display: block; margin-top: -4px;'; // Default label style
+
+ // Adjust label position for specific Well_ID values
+if (['38S14', '50D30', '51S14'].includes(feature.properties.Well_ID)) {
+  labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label to the left and above
+} else if (feature.properties.Well_ID === '33D16') {
+  labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label to the left and above
+  latlng = L.latLng(latlng.lat + 0.000025, latlng.lng - 0.000025); // Slightly offset the position to the right and up
+} else if (feature.properties.Well_ID === '37D17') {
+  // Add any specific label style adjustments for 37D17 if needed
+  latlng = L.latLng(latlng.lat - 0.00002, latlng.lng + 0.00002); // Slightly offset the position to the right and down
+}
+
+
+
+  var icon3 = L.divIcon({
+    className: '', // Set to an empty string to avoid default styles
+    html: '<div style="text-align: center;"><i style="color: ' + iconColor + ';" class="fas fa-circle"></i>' +
+          '<i style="color: black; position: absolute; font-size: 4px; top: 65%; left: 50%; transform: translate(-40%, -30%);" class="fas fa-circle"></i>' + // Adjusted black dot positioning
+          '<span style="' + labelStyle + ' color: ' + iconColor + '; text-shadow: ' +
+          '1px 1px 1px black, -1px -1px 1px black, 1px -1px 1px black, -1px 1px 1px black;">' + // Black outline
+          feature.properties.Well_ID + '</span></div>' // Add label with black outline and adjusted position
+  });
+
+  return L.marker(latlng, {
+    icon: icon3
+  });
+}
+
+
+var threeLayer = L.geoJson(false, {
+    pointToLayer: getThreeMarker,
+    onEachFeature: getPopup
+}).addTo(map);
+
+// Fetch the GeoJSON data and add it to the threeLayer
+var geojsonUrl3 = "https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/wells_remove.geojson";
+fetch(geojsonUrl3)
+  .then(response => response.json())
+  .then(data => {
+    threeLayer.addData(data);
+  })
+  .catch(error => console.error('Error fetching GeoJSON data:', error));
+
+
+
+//*****************ZERO LAYER LABELS***************
+  var zeroLayer = L.geoJson(false, {
+    });
+
+
+//******************* END GEOJSON LAYER CODE************************
+
+
+
+var overlays = {
+    '---Smithville Monitoring Wells---': zeroLayer,
+    'Annual Frequency Wells': oneLayer,
+    'Biennial Frequency Wells': twoLayer,
+    'Remove from program': threeLayer,
+    //'DW Production Wells': twentyLayer,
+    //'DW Pumping Stations': twentyoneLayer,
+    //'DW Storage Facilities': twentytwoLayer,
+    //'-------- WW Infrastructure --------': zero3Layer,
+    //'Wastewater Treatment Plants': twentythreeLayer,
+    //'Wastewater Pumping Stations': twentyfourLayer,
+    //'Watersheds': twoLayer,
+    /*'-----------Municipal Boundaries----------': zero1Layer,
+    'City of Toronto': twentyLayerGroup,
+    'Durham Region': twentyoneLayerGroup,
+    'York Region': twentytwoLayerGroup,
+    'Halton Region': twentythreeLayerGroup,
+    'Peel Region': twentyfourLayerGroup,
+    '-------Water Treatment Infrastructure-----': zero4Layer,
+    'Water Treatment Plants: SW Intakes': twentyeightLayer,    
+    'Intake Protection Zone 2 - IPZ2s': thirtyoneLayer,
+    'Intake Protection Zone 1 - IPZ1s': thirtyLayer,
+    'Drinking Water Production Wells (GW)': twentynineLayer,
+    'Wellhead Protection Area - WHPAs': thirtytwoLayer,
+    //'                                     ': zero2Layer, 
+    '---Source Protection, Watershed & Health---': zero2Layer,
+    'Wastewater Treatment Plants': sixLayer,
+    'Source Protection Plan Areas': twentyfiveLayer,
+    'Lake Simcoe Protection Act Boundary': elevenLayer,
+    'Protected Areas (Greenbelt, NEC, ORM)': fiveLayer,
+    'Conservation Authorities': fourLayer,
+    'Central Region Watersheds': threeLayer,  
+    'Public Health Units': twentysixLayer,  
+    //'NPRI Release Data (2022)': twentysevenLayer,
+    //'WSER Effluent Data': tenLayer,   
+    //'Population Density/km2': fiftyLayerGroup,
+    //'Power Plants': fiftytwoLayerGroup,
+    */
+        
+       };
+
+L.control.layers(null, overlays, {position: 'topright'}).addTo(map);
+
+
+//var layerbox = L.control.layers(null, overlays, {position: 'topright'}).addTo(map);
+//Legend png overlay
+//map.on('overlayadd', function(e) {
+    // Check if the PopulationDensity layer is turned on
+    //if (e.layer === fiftyLayer) { // Ensure this matches your PopulationDensity layer variable
+     //   fiftyoneLayer.addTo(map).bringToFront(); // Add the PNG overlay to the map
+    //}
+//});
+
+//map.on('overlayremove', function(e) {
+    // Check if the PopulationDensity layer is turned off
+  //  if (e.layer === fiftyLayer) { // Ensure this matches your PopulationDensity layer variable
+  //      map.removeLayer(fiftyoneLayer); // Remove the PNG overlay from the map
+  //  }
+//});
+
+//var layerbox =L.removeControl.layers(map, zeroLayer);
+
+
+//GPS*****************************
+
+
+L.control.locate({
+    locateOptions: {
+        enableHighAccuracy: true,
+        watch: true  // Continuously watch for changes in the user's location
+    },
+    position: 'topleft'
+}).addTo(map);
+
+
+//*************************
+
+    map.clicked = 0;   
+
+
+
+var icon200 = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+
+
+var marker100 = L.marker([42.5, -79.0],{
+    icon:icon200,
+    draggable: true
+});
+
+
+
+var toggle50 = L.easyButton({
+    //position: 'bottomleft',
+  states: [{
+    stateName: 'add-marker',
+    icon: 'fas fa-map-marker-alt fa-lg',
+    position: 'bottomleft',
+    //icon: 'fa-location-plus',
+    title: 'add draggable marker',
+    onClick: function(control) {
+        marker100.setLatLng(map.getCenter());
+      map.addLayer(marker100);
+      control.state('remove-marker');
+    }
+  }, {
+    //icon: 'fa-close',
+    icon: 'far fa-times-circle fa-lg',
+    //icon: 'location-pin-slash',
+    stateName: 'remove-marker',
+    onClick: function(control) {
+      map.removeLayer(marker100);
+      control.state('add-marker');
+    },
+    title: 'remove marker'
+  }]
+});
+//toggle50.setPosition('bottomleft').addTo(map);
+toggle50.addTo(map);
+
+// new marker code with street view
+marker100.clicked = 0;
+marker100.on('click', function(event) {
+    marker100.clicked = marker100.clicked + 1;
+    setTimeout(function() {
+        if (marker100.clicked === 1) {
+            var latlng = event.latlng;
+            var latlngStr = latlng.lat.toFixed(4) + ", " + latlng.lng.toFixed(4);
+            
+            // Check if the device is mobile
+            var isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+            // Construct the appropriate URL based on the device type
+            var googleMapsUrl = isMobile 
+                ? `https://www.google.com/maps/search/?api=1&query=${latlng.lat.toFixed(4)},${latlng.lng.toFixed(4)}`  // Mobile: Open map at coordinates
+                : `https://www.google.com/maps?layer=c&cbll=${latlng.lat.toFixed(4)},${latlng.lng.toFixed(4)}`;        // Desktop: Open Street View
+
+            var popupContent = `
+                <a href="#" onclick="copyTextToClipboard('${latlngStr}')">${latlngStr}</a><br>
+                <a href="${googleMapsUrl}" target="_blank"><br>Open in Google Maps</a>
+            `;
+
+            marker100.bindPopup(popupContent).openPopup();              
+            marker100.clicked = 0;
+        }
+    }, 200);
+});
+
+
+/* old marker code
+marker100.clicked = 0;
+marker100.on('click', function(event) {
+    marker100.clicked = marker100.clicked + 1;
+    setTimeout(function() {
+        if(marker100.clicked == 1) {
+            var latlngStr = event.latlng.lat.toFixed(5) + ", " + event.latlng.lng.toFixed(5);
+            var popupContent = '<a href="#" onclick="copyTextToClipboard(\'' + latlngStr + '\')">' + latlngStr + '</a>';
+            marker100.bindPopup(popupContent).openPopup();              
+            marker100.clicked = 0;
+        }
+    }, 200);
+});
+*/
+
+
+function copyTextToClipboard(text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Copying text command was ' + msg);
+    } catch (err) {
+        console.error('Oops, unable to copy', err);
+    }
+    document.body.removeChild(textArea);
+}
+
+//****************end marker1
+
+map.on('dblclick', function(event){
+    map.clicked = 0;
+    map.zoomIn();
+});
+//scale
+// MAP SCALE BOTTOM LEFT
+//var scaleControl = L.control.scale({
+ // position: 'bottomleft'
+//});
+
+
+//scaleControl.addTo(map);
+var contactsButton = L.easyButton({
+    states: [{
+        stateName: 'show-contacts',
+        icon:  'fa-solid fa-phone fa-lg',   //'fa-address-book', // Font Awesome 'contacts' icon
+        position: 'bottomleft',
+        title: 'Contacts',
+        onClick: function() {
+            // Your code to show contacts goes here
+            window.open('https://cr-wco-contacts.netlify.app/', '_blank');
+        }
+    }]
+});
+
+contactsButton.addTo(map);
+//https://rad-cupcake-048ed3.netlify.app/
+
+//***********************
+
+
+/*
+var googleButton = L.easyButton({
+    id: 'google-button', // ID for CSS targeting
+    position: 'bottomleft', // Position of the button
+    states: [{
+        stateName: 'open-google',
+        icon: 'fab fa-google fa-lg', // Font Awesome Google icon
+        title: 'Open Google Maps',
+        onClick: function() {
+            var center = map.getCenter(); // Get the current center of the map
+            window.open(`https://www.google.com/maps/@${center.lat},${center.lng},10z`, '_blank'); // Open Google Maps centered at this location
+        }
+    }]
+});
+
+
+googleButton.addTo(map);
+*/
+
+
+// Function to calculate humidex
+        //function calculateHumidex(temperature, humidity) {
+         //   const dewPoint = 243.04 * (Math.log(humidity / 100) + ((17.625 * temperature) / (243.04 + temperature))) / (17.625 - Math.log(humidity / 100) - ((17.625 * temperature) / (243.04 + temperature)));
+        //    const humidex = temperature + 0.5555 * (6.11 * Math.exp(5417.7530 * ((1 / 273.16) - (1 / (273.15 + dewPoint)))) - 10);
+       //     return humidex;
+     //   }
+
+       // ... Previous JavaScript setup ...
+// Assuming centerLat and centerLng are already defined
+// Assuming centerLat and centerLng are already defined
+const now = new Date(); // Gets the current date and time
+const options = { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' };
+const currentTime = now.toLocaleTimeString('en-US', options); // Formats the time without seconds
+
+function fetchWeather(lat, lon) {
+    const weatherApiKey = 'f259e8a9c2f64afe931195059241502'; // Use your actual Weather API key
+    const forecastUrl = `https://api.weatherapi.com/v1/forecast.json?q=${lat},${lon}&days=1&alerts=yes&aqi=yes&key=${weatherApiKey}`;
+
+    // Calculate bounding box for AQHI data
+    const bboxWidth = 1.0; // Adjust this value as needed
+    const bboxHeight = 1.0; // Adjust this value as needed
+    const mapCenter = map.getCenter();
+    const centerLat = mapCenter.lat.toFixed(3);
+    const centerLng = mapCenter.lng.toFixed(3);
+    const bboxMinLon = mapCenter.lng - (bboxWidth / 2);
+    const bboxMaxLon = mapCenter.lng + (bboxWidth / 2);
+    const bboxMinLat = mapCenter.lat - (bboxHeight / 2);
+    const bboxMaxLat = mapCenter.lat + (bboxHeight / 2);
+
+    const aqhiDataURL = `https://api.weather.gc.ca/collections/aqhi-forecasts-realtime/items?f=json&lang=en-CA&limit=10&properties=aqhi,aqhi_type&skipGeometry=false&offset=0&bbox=${bboxMinLon},${bboxMinLat},${bboxMaxLon},${bboxMaxLat}`;
+
+    Promise.all([
+        fetch(forecastUrl).then(response => response.json()),
+        fetch(aqhiDataURL).then(response => response.json())
+    ])
+  .then(([weatherData, aqhiData]) => {
+    let locationName = weatherData.location.name;
+    let regionName = weatherData.location.region;
+    let localTime = new Date(weatherData.location.localtime_epoch * 1000);
+    let formattedDate = localTime.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    let formattedTime = localTime.toLocaleTimeString('en-US', options);
+    let weatherInfo = `<div style="max-height: 75vh; overflow-y: auto;">
+        <a href="#" onclick="copyWeatherInfoToClipboard(event)" style="text-decoration: underline; color: black;">
+            <div><strong>@${centerLat} ${centerLng} | ${locationName}, ${regionName}</strong></div>
+            <div><strong>${formattedDate} | ${formattedTime}</strong></div>
+            <hr style="margin: 2px 0; border: 0; height: 1px; background-color: #ccc;">
+        </a>
+        <div><strong>Weather</strong><br>`;
+
+
+
+
+        const current = weatherData.current;
+
+        weatherInfo += `
+            Temp: ${current.temp_c}°C<br>
+            Wind: ${current.wind_kph} km/h ${current.wind_dir}<br>
+            Humidity: ${current.humidity}%<br>
+            UV Index: ${current.uv}<br>
+            Conditions: ${current.condition.text}<br>`;
+
+        // Add Humidex to the display if above 25
+        const humidex = calculateHumidex(current.temp_c, current.humidity).toFixed(2);
+        if (parseFloat(humidex) > 25) {
+            weatherInfo += `Humidex: ${humidex}<br>`;
+        }
+
+        weatherInfo += '<hr>';
+
+        // Air Quality Section
+        let AQHI = aqhiData && aqhiData.features && aqhiData.features.length > 0 ? aqhiData.features[0].properties.aqhi : null;
+        let riskLevel;
+        let riskClass; // CSS class for background color
+
+        if (AQHI !== null) {
+            if (AQHI >= 1 && AQHI <= 3) {
+                riskLevel = 'Low Risk';
+                riskClass = 'low-risk';
+            } else if (AQHI >= 4 && AQHI <= 6) {
+                riskLevel = 'Moderate Risk';
+                riskClass = 'moderate-risk';
+            } else if (AQHI >= 7 && AQHI <= 10) {
+                riskLevel = 'High Risk';
+                riskClass = 'high-risk';
+            } else if (AQHI > 10) {
+                riskLevel = 'Very High Risk';
+                riskClass = 'very-high-risk';
+            } else {
+                riskLevel = 'Unknown'; // In case of unexpected value
+            }
+        }
+
+        const aqiData = current.air_quality;
+
+        // Air Quality Section (adjusted to define aqiData properly)
+        let AQI = aqiData['us-epa-index']; // Assuming 'us-epa-index' is the property name for the AQI value
+        let qualityLevel;
+        let qualityClass; // CSS class for background color
+
+        if (AQI !== null) {
+            if (AQI == 1) {
+                qualityLevel = 'Good';
+                qualityClass = 'green';
+            } else if (AQI == 2) {
+                qualityLevel = 'Moderate';
+                qualityClass = 'yellow';
+            } else if (AQI == 3) {
+                qualityLevel = 'Unhealthy for Sensitive Groups';
+                qualityClass = 'orange';
+            } else if (AQI == 4) {
+                qualityLevel = 'Unhealthy';
+                qualityClass = 'red';
+            } else if (AQI == 5) {
+                qualityLevel = 'Very Unhealthy';
+                qualityClass = 'purple';
+            } else if (AQI == 6) {
+                qualityLevel = 'Hazardous';
+                qualityClass = 'maroon';
+            } else {
+                qualityLevel = 'Unknown'; // In case of unexpected value
+                qualityClass = 'unknown'; // Added class for unknown quality
+            }
+        }
+
+        const canadaFlagUrl = "https://img.icons8.com/fluency/48/canada-circular.png";
+        const usaFlagUrl = "https://img.icons8.com/fluency/48/usa-circular.png";
+
+        weatherInfo += `<strong>Air Quality:</strong><br>`;
+        weatherInfo += `<strong>AQHI <img src="${canadaFlagUrl}" alt="Canada" style="width: 17px; height: auto;">: <span class="${riskClass}">${AQHI != null ? AQHI : 'N/A'}${AQHI != null ? ` (${riskLevel})` : ''}</span></strong><br>`;
+        weatherInfo += `<strong>AQI <img src="${usaFlagUrl}" alt="USA" style="width: 17px; height: auto;">: <span class="${qualityClass}">${AQI != null ? AQI : 'N/A'}${AQI != null ? ` (${qualityLevel})` : ''}</span></strong><br>`;
+
+        weatherInfo += `
+            <table style="border-collapse: collapse;">
+                <tr>
+                    <td style="border: 1px solid #ccc; padding: 5px;">O3: ${aqiData.o3} µg/m³</td>
+                    <td style="border: 1px solid #ccc; padding: 5px;">SO2: ${aqiData.so2} µg/m³</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ccc; padding: 5px;">NO2: ${aqiData.no2} µg/m³</td>
+                    <td style="border: 1px solid #ccc; padding: 5px;">CO: ${Math.round(aqiData.co)} µg/m³</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #ccc; padding: 5px;">PM10: ${aqiData.pm10} µg/m³</td>
+                    <td style="border: 1px solid #ccc; padding: 5px;">PM2.5: ${aqiData.pm2_5} µg/m³</td>
+                </tr>
+            </table>`;
+
+        // Alerts Section
+weatherInfo += `<hr><strong>Alerts:</strong><br>`;
+if (weatherData.alerts && weatherData.alerts.alert.length > 0) {
+    let uniqueDescriptions = new Set(); // Set to store unique descriptions
+    weatherData.alerts.alert.forEach(alert => {
+        let descLines = alert.desc.split('\n').slice(0, 6).join('\n'); // Take only the first four lines
+        if (!uniqueDescriptions.has(descLines)) { // Check if the description is unique
+            uniqueDescriptions.add(descLines); // Add the unique description to the Set
+            weatherInfo += `
+                <div class="alert-info">
+                    <strong>Type:</strong> ${alert.event}<br>
+                    <strong>Info:</strong> ${descLines}<br>
+                </div>`;
+        }
+    });
+} else {
+    weatherInfo += `No current alerts.<br>`;
+}
+
+weatherInfo += `</div></div>`; // Close the inner and outer divs
+
+
+        document.getElementById('weatherInfo').innerHTML = weatherInfo;
+        document.getElementById('weatherInfo').style.display = 'block';
+    })
+    .catch(error => console.error('Error fetching data:', error));
+}
+
+function copyWeatherInfoToClipboard(event) {
+    event.preventDefault();
+    const weatherInfoBox = document.getElementById('weatherInfo');
+    const weatherInfoText = weatherInfoBox.innerText;
+
+    // Find the index of the "Alerts" section
+    const alertsIndex = weatherInfoText.indexOf('Alerts:');
+    
+    // Get the text before the "Alerts" section
+    const textToCopy = alertsIndex >= 0 ? weatherInfoText.substring(0, alertsIndex) : weatherInfoText;
+
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            console.log('Weather info copied to clipboard');
+        })
+        .catch(err => {
+            console.error('Failed to copy weather info to clipboard:', err);
+        });
+
+    return false;
+}
+
+
+// Function to calculate humidex
+function calculateHumidex(temperature, humidity) {
+    const dewPoint = 243.04 * (Math.log(humidity / 100) + ((17.625 * temperature) / (243.04 + temperature))) / (17.625 - Math.log(humidity / 100) - ((17.625 * temperature) / (243.04 + temperature)));
+    const humidex = temperature + 0.5555 * (6.11 * Math.exp(5417.7530 * ((1 / 273.16) - (1 / (273.15 + dewPoint)))) - 10);
+    return humidex;
+}
+
+function isLikelyEnglish(text) {
+    const commonEnglishWords = ['the', 'and', 'of', 'to', 'in', 'a', 'is', 'where', 'when'];
+    return commonEnglishWords.some(word => text.toLowerCase().includes(word));
+}
+
+
+//*****************************
+var weatherButton = L.easyButton({
+    id: 'weather-toggle-button',
+    position: 'topleft',
+    type: 'replace',
+    leafletClasses: true,
+    states: [{
+        stateName: 'show-weather',
+        icon: 'fas fa-temperature-low fa-lg',
+        title: 'Show weather info',
+        onClick: function(btn, map) {
+            var center = map.getCenter();
+            fetchWeather(center.lat, center.lng);
+            btn.button.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+            btn.state('hide-weather');
+        }
+    }, {
+        stateName: 'hide-weather',
+        icon: 'fas fa-temperature-low fa-lg',
+        title: 'Hide weather info',
+        onClick: function(btn, map) {
+            var weatherBox = document.getElementById('weatherInfo');
+            weatherBox.style.display = 'none';
+            btn.button.style.backgroundColor = '';
+            btn.state('show-weather');
+        }
+    }]
+}).addTo(map);
+
+
+
+
+//*******************HIDE IN IOS UNTIL FIXED
+//function isIOS() {
+  //  return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+//}
+
+//if (isIOS()) {
+  //  var weatherButtonElement = document.getElementById('weather-toggle-button');
+  //  if (weatherButtonElement) {
+  //      weatherButtonElement.style.display = 'none';
+  //  }
+//}
+
+//************************************
+
+var refreshButton = L.easyButton({
+    states: [{
+        stateName: 'refresh-map',
+        icon: 'fas fa-sync-alt fa-lg', // Using Font Awesome 'sync-alt' (refresh) icon
+        position: 'bottomleft',
+        title: 'Refresh Map',
+        onClick: function() {
+            // Logic to refresh the map
+            // For example, you might reload the map data or simply reload the page
+            window.location.reload();
+        }
+    }]
+});
+refreshButton.addTo(map);
+
+
+//****************************************
+var eraseButton = L.easyButton({
+    states: [{
+        stateName: 'erase-all',
+        icon: 'fas fa-trash-alt fa-lg', // Using Font Awesome 'trash' icon
+        position: 'bottomleft',
+        title: 'Erase All Layers',
+        onClick: function() {
+            // Logic to remove layers
+            //map.removeLayer(marker100);
+            for (var i in overlays) {
+                console.log(i);
+                map.removeLayer(overlays[i]);
+            }
+        }
+    }]
+});
+eraseButton.addTo(map);
+
+//*****************************
+var infoButton = L.easyButton({
+    states: [{
+        stateName: 'show-info',
+        icon: 'fas fa-info-circle fa-lg', // Using Font Awesome 'info' icon <i class="fa-regular fa-circle-info fa-lg"></i>
+        position: 'bottomleft',
+        title: 'Open Instructions Guide',
+        onClick: function() {
+            // Open the URL in a new browser window or tab
+            window.open('https://webmap-guide.netlify.app/', '_blank');
+        }
+    }]
+});
+
+infoButton.addTo(map);
+
+//*********************************
+
+
+//ALL
+//https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/converted_wells.geojson
+
+//separated wells
+
+//https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/wells_annual.geojson
+//https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/wells_biennial.geojson
+//https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/wells_remove.geojson
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend'),
+        monitoringFrequencies = ['Annual', 'Biennial', 'Remove'],
+        colors = ['#FFD43b', '#1bc03c', '#df1130'], // Corresponding colors for each frequency
+        labels = [];
+
+    // Add a title to the legend
+    div.innerHTML = '<h4 style="margin: 0; padding: 5px; text-align: center;">Monitoring <br>Frequency</h4>'; // Center the title and add padding
+
+    // Loop through the monitoring frequencies and generate a label with a colored circle for each
+    for (var i = 0; i < monitoringFrequencies.length; i++) {
+        labels.push(
+            '<div style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 5px;">' + // Align items to the start
+            '<i style="background:' + colors[i] + '; width: 18px; height: 18px; border-radius: 50%; margin-right: 4px;"></i>' +
+            '<span>' + monitoringFrequencies[i] + '</span>' +
+            '</div>'
+        );
+    }
+
+    // Join the labels and add them to the div
+    div.innerHTML += labels.join('');
+
+    // Add white transparent background to the legend div
+    div.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+    div.style.padding = '10px';
+    div.style.borderRadius = '5px';
+    div.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.2)'; // Optional: Add a subtle shadow for better visibility
+
+    return div;
+};
+
+legend.addTo(map);
+
+
+
+	</script>
+</body>
+</html>
