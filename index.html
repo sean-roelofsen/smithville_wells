@@ -514,7 +514,7 @@ body {
 
 <div class="target">
 
-<p><b><u>Smithville Monitoring Wells Webmap Tool</u> &nbsp</b><a href="https://www.ontario.ca/page/ministry-environment-conservation-parks" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/OwenSoundWW/main/ONLOGO.png" alt="MECP" width="60" height="20"></a></p>
+<p><b><u>Smithville Monitoring Wells Webmap Tool </u> &nbsp</b><a href="https://www.ontario.ca/page/ministry-environment-conservation-parks" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/OwenSoundWW/main/ONLOGO.png" alt="MECP" width="60" height="20"></a></p>
 
 <p><a href="https://cr-wco-contacts.netlify.app/" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Inspector_List_Apr_24.png" alt="MECP CR Inspector List" width="325" height="300"></a></p>
 
@@ -2202,18 +2202,19 @@ fetch(geojsonUrl1)
   if (feature.properties.Well_ID === '7S13') {
     labelStyle = 'display: block; margin-left: -50px; margin-top: -10px;'; // Move label up and to the left
 } else if (feature.properties.Well_ID === '7D39') {
-    labelStyle = 'display: block; margin-top: -35px; margin-left: 10px;'; // Move label above and slightly to the right
+    labelStyle = 'display: block; margin-top: -30px; margin-left: 10px;'; // Move label above and slightly to the right
     latlng = L.latLng(latlng.lat + 0.0000185, latlng.lng + 0.0000185); // Slightly offset the position of 7D39
 } else if (feature.properties.Well_ID === '7D26') {
-    labelStyle = 'display: block; margin-top: 2px; margin-left: 10px;'; // Move label slightly up and to the right
+    labelStyle = 'display: block; margin-top: 0px; margin-left: 5px;'; // Move label slightly up and to the right
 } else if (feature.properties.Well_ID === '37S11') {
     labelStyle = 'display: block; margin-top: -30px; margin-left: -40px;'; // Move label to the left and above
 } else if (feature.properties.Well_ID === '35D34') {
     labelStyle = 'display: block; margin-top: -10px; margin-left: -55px;'; // Move label to the left
 } else if (feature.properties.Well_ID === '36D18') {
     labelStyle = 'display: block; margin-top: -15px; margin-left: 20px;'; // Move label to the right and up a bit
+} else if (feature.properties.Well_ID === '6S11') {
+    labelStyle = 'display: block; margin-top: -10px; margin-left: -40px;';
 }
-
 
   var icon2 = L.divIcon({
     className: '', // Set to an empty string to avoid default styles
@@ -2258,7 +2259,7 @@ function getThreeMarker(feature, latlng) {
 if (['38S14', '50D30', '51S14'].includes(feature.properties.Well_ID)) {
   labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label to the left and above
 } else if (feature.properties.Well_ID === '33D16') {
-  labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label to the left and above
+  labelStyle = 'display: block; margin-left: -20px; margin-top: -30px;'; // Move label to the left and above
   latlng = L.latLng(latlng.lat + 0.000025, latlng.lng - 0.000025); // Slightly offset the position to the right and up
 } else if (feature.properties.Well_ID === '37D17') {
   // Add any specific label style adjustments for 37D17 if needed
