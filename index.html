@@ -2519,14 +2519,16 @@ var contactsButton = L.easyButton({
         position: 'bottomleft',
         title: 'Contacts',
         onClick: function() {
-            // Your code to show contacts goes here
-            window.open('https://cr-wco-contacts.netlify.app/', '_blank');
+            // Open a new window with the text "CONTACTS TBD"
+            var contactsWindow = window.open('', '_blank');
+            contactsWindow.document.write('<html><head><title>Contacts</title></head><body><p>CONTACTS TBD<br> WCR TSS</p></body></html>');
+            contactsWindow.document.close();
         }
     }]
 });
 
 contactsButton.addTo(map);
-//https://rad-cupcake-048ed3.netlify.app/
+
 
 //***********************
 
@@ -2880,7 +2882,7 @@ legend.onAdd = function (map) {
         labels = [];
 
     // Add a title to the legend
-    div.innerHTML = '<h4 style="margin: 0; padding: 5px; text-align: center;">Monitoring <br>Freq. (2024-25)</h4>'; // Center the title and add padding
+    div.innerHTML = '<h4 style="margin: 0; padding: 5px; text-align: center;">Monitoring <br>Frequency <br>2024-25</h4>'; // Center the title and add padding
 
     // Loop through the monitoring frequencies and generate a label with a colored circle for each
     for (var i = 0; i < monitoringFrequencies.length; i++) {
