@@ -1,0 +1,13 @@
+{
+  "name": "Smithville Monitoring Wells",
+  "short_name": "Smithville Wells",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/wells.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "minimal-ui"
+}
