@@ -2169,7 +2169,7 @@ function getOneMarker(feature, latlng) {
 } else if (feature.properties.Well_ID === 'RWS7') {
     labelStyle = 'display: block; margin-left: -50px; margin-top: -18px;'; // Move label to the top of the marker
 } else if (feature.properties.Well_ID === '36S12') {
-    labelStyle = 'display: block; margin-left: -10px; margin-top: -31px;'; // Move label to the top of the marker
+    labelStyle = 'display: block; margin-left: -20px; margin-top: -31px;'; // Move label to the top of the marker
 } else if (feature.properties.Well_ID === 'RWS2') {
     labelStyle = 'display: block; margin-left: -50px; margin-top: -23px;'; // Move label to the top of the marker
 } else if (feature.properties.Well_ID === 'RWS1') {
@@ -2232,11 +2232,11 @@ fetch(geojsonUrl1)
 } else if (feature.properties.Well_ID === '7D26') {
     labelStyle = 'display: block; margin-top: -5px; margin-left: 0px;';
 } else if (feature.properties.Well_ID === '37S11') {
-    labelStyle = 'display: block; margin-top: -32px; margin-left: -5px;';
+    labelStyle = 'display: block; margin-top: -31px; margin-left: 5px;';
 } else if (feature.properties.Well_ID === '35D34') {
     labelStyle = 'display: block; margin-top: -10px; margin-left: -55px;';
 } else if (feature.properties.Well_ID === '36D18') {
-    labelStyle = 'display: block; margin-top: -15px; margin-left: 15px;';
+    labelStyle = 'display: block; margin-top: -19px; margin-left: 15px;';
 } else if (feature.properties.Well_ID === '6S11') {
     labelStyle = 'display: block; margin-top: -32px; margin-left: -10px;';
 } else if (feature.properties.Well_ID === '9S8') {
@@ -2308,6 +2308,8 @@ if (['38S14', '50D30', '51S14'].includes(feature.properties.Well_ID)) {
   // Add any specific label style adjustments for 37D17 if needed
   latlng = L.latLng(latlng.lat - 0.00002, latlng.lng + 0.00002); // Slightly offset the position to the right and down
 } else if (feature.properties.Well_ID === '40S12') {
+    labelStyle = 'display: block; margin-top: -15px; margin-left: 15px;';
+} else if (feature.properties.Well_ID === '48D26') {
     labelStyle = 'display: block; margin-top: -15px; margin-left: 15px;';
 } 
 
