@@ -2925,13 +2925,13 @@ legend.onAdd = function (map) {
         labels = [];
 
     // Add a title to the legend
-    div.innerHTML = '<h4 style="margin: 0; padding: 5px; text-align: center;">Monitoring <br>Frequency <br>2024-25</h4>'; // Center the title and add padding
+    div.innerHTML = '<h4 style="margin: 0; padding: 3px; text-align: center;">Monitoring <br>Frequency <br>2024-25</h4>'; // Center the title and add padding
 
     // Loop through the monitoring frequencies and generate a label with a colored circle for each
     for (var i = 0; i < monitoringFrequencies.length; i++) {
         labels.push(
-            '<div style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 5px;">' + // Align items to the start
-            '<i style="background:' + colors[i] + '; width: 18px; height: 18px; border-radius: 50%; margin-right: 4px;"></i>' +
+            '<div style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 4px;">' + // Align items to the start
+            '<i style="background:' + colors[i] + '; width: 14px; height: 14px; border-radius: 50%; margin-right: 4px;"></i>' +
             '<span>' + monitoringFrequencies[i] + '</span>' +
             '</div>'
         );
@@ -2942,8 +2942,8 @@ legend.onAdd = function (map) {
 
     // Add white transparent background to the legend div
     div.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-    div.style.padding = '10px';
-    div.style.borderRadius = '5px';
+    div.style.padding = '7px';
+    div.style.borderRadius = '4px';
     div.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.2)'; // Optional: Add a subtle shadow for better visibility
 
     return div;
