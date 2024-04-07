@@ -529,7 +529,7 @@ body {
 	<script>
 		var lat = 43.1034;
 		var lng = -79.5370;
-		var zoom = 16.0;
+		var zoom = 15.5;
 
 		
 
@@ -537,6 +537,7 @@ body {
       var map = L.map('map', {
           zoomControl: false,
           maxZoom:18,
+	  zoomSnap: 0.5,
           tap: false
           
           });
