@@ -537,7 +537,7 @@ body {
       var map = L.map('map', {
           zoomControl: false,
           maxZoom:18,
-	  zoomSnap: 0.5,
+          zoomSnap: 0.5,
           tap: false
           
           });
@@ -2157,12 +2157,34 @@ function getOneMarker(feature, latlng) {
   var labelStyle = 'display: block; margin-top: -4px;'; // Default label style
 
   // Adjust label position for specific Well_ID values
- if (['5S14', '36S12', '52S14'].includes(feature.properties.Well_ID)) {
-  labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label above and to the left
+ if (['5S14', '52S14'].includes(feature.properties.Well_ID)) {
+    labelStyle = 'display: block; margin-left: -20px; margin-top: -30px;'; // Move label above and to the left
 } else if (feature.properties.Well_ID === '34S12') {
-  labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label above and to the left
-  latlng = L.latLng(latlng.lat + 0.000015, latlng.lng - 0.000015); // Slightly offset the position to the left and up
+    labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label above and to the left
+    latlng = L.latLng(latlng.lat + 0.000015, latlng.lng - 0.000015); // Slightly offset the position to the left and up
+} else if (feature.properties.Well_ID === '27S7') {
+    labelStyle = 'display: block; margin-left: -45px; margin-top: -15px;'; // Move label to the left
+} else if (feature.properties.Well_ID === 'RWS8') {
+    labelStyle = 'display: block; margin-left: -50px; margin-top: -25px;'; // Move label to the top of the marker
+} else if (feature.properties.Well_ID === 'RWS7') {
+    labelStyle = 'display: block; margin-left: -50px; margin-top: -18px;'; // Move label to the top of the marker
+} else if (feature.properties.Well_ID === '36S12') {
+    labelStyle = 'display: block; margin-left: -10px; margin-top: -31px;'; // Move label to the top of the marker
+} else if (feature.properties.Well_ID === 'RWS2') {
+    labelStyle = 'display: block; margin-left: -50px; margin-top: -23px;'; // Move label to the top of the marker
+} else if (feature.properties.Well_ID === 'RWS1') {
+    labelStyle = 'display: block; margin-left: 15px; margin-top: -15px;'; // Move label to the top of the marker
+} else if (feature.properties.Well_ID === '41S10') {
+    labelStyle = 'display: block; margin-top: -15px; margin-left: 15px;';
+} else if (feature.properties.Well_ID === 'RWS3') {
+    labelStyle = 'display: block; margin-top: -15px; margin-left: 15px;';
+} else if (feature.properties.Well_ID === 'RWS4') {
+    labelStyle = 'display: block; margin-top: -8px; margin-left: 10px;';
+} else if (feature.properties.Well_ID === 'RWS6') {
+    labelStyle = 'display: block; margin-top: -5px; margin-left: -30px;';
 }
+
+
 
 var icon1 = L.divIcon({
   className: '', // Set to an empty string to avoid default styles
@@ -2203,21 +2225,37 @@ fetch(geojsonUrl1)
 
   // Adjust label position based on specific Well_ID values
   if (feature.properties.Well_ID === '7S13') {
-    labelStyle = 'display: block; margin-left: -50px; margin-top: -10px;'; // Move label up and to the left
+    labelStyle = 'display: block; margin-left: -47px; margin-top: -10px;';
 } else if (feature.properties.Well_ID === '7D39') {
-    labelStyle = 'display: block; margin-top: -30px; margin-left: 10px;'; // Move label above and slightly to the right
-    latlng = L.latLng(latlng.lat + 0.0000185, latlng.lng + 0.0000185); // Slightly offset the position of 7D39
+    labelStyle = 'display: block; margin-top: -30px; margin-left: -30px;';
+    latlng = L.latLng(latlng.lat + 0.0000185, latlng.lng + 0.0000185);
 } else if (feature.properties.Well_ID === '7D26') {
-    labelStyle = 'display: block; margin-top: 0px; margin-left: 5px;'; // Move label slightly up and to the right
+    labelStyle = 'display: block; margin-top: -5px; margin-left: 5px;';
 } else if (feature.properties.Well_ID === '37S11') {
-    labelStyle = 'display: block; margin-top: -30px; margin-left: -40px;'; // Move label to the left and above
+    labelStyle = 'display: block; margin-top: -32px; margin-left: -5px;';
 } else if (feature.properties.Well_ID === '35D34') {
-    labelStyle = 'display: block; margin-top: -10px; margin-left: -55px;'; // Move label to the left
+    labelStyle = 'display: block; margin-top: -10px; margin-left: -55px;';
 } else if (feature.properties.Well_ID === '36D18') {
-    labelStyle = 'display: block; margin-top: -15px; margin-left: 20px;'; // Move label to the right and up a bit
+    labelStyle = 'display: block; margin-top: -15px; margin-left: 15px;';
 } else if (feature.properties.Well_ID === '6S11') {
-    labelStyle = 'display: block; margin-top: -10px; margin-left: -40px;';
-}
+    labelStyle = 'display: block; margin-top: -32px; margin-left: -10px;';
+} else if (feature.properties.Well_ID === '9S8') {
+    labelStyle = 'display: block; margin-top: -31px; margin-left: -10px;'; // Adjust the margin values as needed
+} else if (feature.properties.Well_ID === '28S9') {
+    labelStyle = 'display: block; margin-top: -31px; margin-left: 10px;'; // Adjust the margin values as needed
+} else if (feature.properties.Well_ID === '45D29') {
+    labelStyle = 'display: block; margin-top: -33px; margin-left: -20px;'; // Adjust the margin values as needed
+} else if (feature.properties.Well_ID === '8S7') {
+    labelStyle = 'display: block; margin-top: -31px; margin-left: -10px;'; // Adjust the margin values as needed
+} else if (feature.properties.Well_ID === '34D18') {
+    labelStyle = 'display: block; margin-top: -10px; margin-left: -50px;';
+} else if (feature.properties.Well_ID === '32S12') {
+    labelStyle = 'display: block; margin-top: -15px; margin-left: 15px;';
+} else if (feature.properties.Well_ID === '31S12') {
+    labelStyle = 'display: block; margin-top: -10px; margin-left: 13px;';
+} else if (feature.properties.Well_ID === '29S12') {
+    labelStyle = 'display: block; margin-top: -25px; margin-left: -50px;';
+} 
 
   var icon2 = L.divIcon({
     className: '', // Set to an empty string to avoid default styles
@@ -2262,12 +2300,14 @@ function getThreeMarker(feature, latlng) {
 if (['38S14', '50D30', '51S14'].includes(feature.properties.Well_ID)) {
   labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label to the left and above
 } else if (feature.properties.Well_ID === '33D16') {
-  labelStyle = 'display: block; margin-left: -20px; margin-top: -30px;'; // Move label to the left and above
+  labelStyle = 'display: block; margin-left: 0px; margin-top: -35px;'; // Move label to the left and above
   latlng = L.latLng(latlng.lat + 0.000025, latlng.lng - 0.000025); // Slightly offset the position to the right and up
 } else if (feature.properties.Well_ID === '37D17') {
   // Add any specific label style adjustments for 37D17 if needed
   latlng = L.latLng(latlng.lat - 0.00002, latlng.lng + 0.00002); // Slightly offset the position to the right and down
-}
+} else if (feature.properties.Well_ID === '40S12') {
+    labelStyle = 'display: block; margin-top: -15px; margin-left: 15px;';
+} 
 
 
 
