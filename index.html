@@ -84,14 +84,14 @@
 
 /* Hide checkboxes for the 1st, 4th, and 10th layers */
 .leaflet-control-layers-overlays label:nth-child(1) .leaflet-control-layers-selector,
-.leaflet-control-layers-overlays label:nth-child(7) .leaflet-control-layers-selector,
+.leaflet-control-layers-overlays label:nth-child(5) .leaflet-control-layers-selector,
 .leaflet-control-layers-overlays label:nth-child(13) .leaflet-control-layers-selector {
     display: none; /* Hides the checkbox */
 }
 
 /* Optionally, disable pointer events for these labels to prevent clicking */
 .leaflet-control-layers-overlays label:nth-child(1),
-.leaflet-control-layers-overlays label:nth-child(7),
+.leaflet-control-layers-overlays label:nth-child(5),
 .leaflet-control-layers-overlays label:nth-child(13) {
     pointer-events: none;
     font-weight: bold; /* Makes the text bold */
@@ -489,7 +489,7 @@ p {
             max-width: 80%;
         }
     .leaflet-control-layers-overlays label:nth-child(1),
-    .leaflet-control-layers-overlays label:nth-child(7),
+    .leaflet-control-layers-overlays label:nth-child(5),
     .leaflet-control-layers-overlays label:nth-child(13) {
         font-size: 1.1em; /* Slightly larger font size for better readability */
       }
@@ -1238,14 +1238,17 @@ var popupText = ''
 ;
 popupText += (feature.properties.Well_ID) ? '<b>Well ID: </b> ' + feature.properties.Well_ID : '';
 
+popupText += (feature.properties.WELL_ID) ? '<b>Well ID: </b> ' + feature.properties.WELL_ID : '';
+
 popupText += (feature.properties.Monitoring_Frequency) ? '<br>Monitoring Frequency: ' + feature.properties.Monitoring_Frequency : '';
 
 popupText += (feature.properties.Casing_Material) ? '<br><br>Casing Material:  ' + feature.properties.Casing_Material : '';
 
 popupText += (feature.properties.Screen_Type) ? '<br>Screen Type:  ' + feature.properties.Screen_Type : '';
 
-popupText += (feature.properties.Construction_Date_ddmmyyyy) ? '<br>Construction Date: ' + feature.properties.Construction_Date_ddmmyyyy : '';
+popupText += (feature.properties.Construction_Date_ddmmyyyy) ? '<br>Date Completed: ' + feature.properties.Construction_Date_ddmmyyyy : '';
 
+popupText += (feature.properties.COMPLETED) ? '<br>Date Completed: ' + feature.properties.COMPLETED : '';
 
 popupText += (feature.properties.NAME) ? ' ' + feature.properties.NAME : '';
 
@@ -2350,10 +2353,41 @@ fetch(geojsonUrl3)
   })
   .catch(error => console.error('Error fetching GeoJSON data:', error));
 
+//***************Water Wells*********************
+
+function getFourMarker(feature, latlng) {
+  var iconColor = '#185bcd'; // Define the icon color
+  var icon4 = L.divIcon({
+    className: '', // Set to an empty string to avoid default styles
+    html: '<div style="text-align: center;"><i style="color: ' + iconColor + ';" class="fas fa-dot-circle"></i>' 
+  });
+
+  return L.marker(latlng, {
+    icon: icon4
+  });
+}
+
+var fourLayer = L.geoJson(false, {
+  pointToLayer: getFourMarker,
+  onEachFeature: getPopup
+})//.addTo(map);
+
+var geojsonUrl4 = "https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/converted_wells_1km.geojson";
+fetch(geojsonUrl4)
+  .then(response => response.json())
+  .then(data => {
+    fourLayer.addData(data);
+  })
+  .catch(error => console.error('Error fetching GeoJSON data:', error));
+
+
 
 
 //*****************ZERO LAYER LABELS***************
   var zeroLayer = L.geoJson(false, {
+    });
+
+  var zero1Layer = L.geoJson(false, {
     });
 
 
@@ -2366,10 +2400,11 @@ var overlays = {
     'Annual Frequency Wells': oneLayer,
     'Biennial Frequency Wells': twoLayer,
     'Remove from program': threeLayer,
-    //'DW Production Wells': twentyLayer,
+    '--------- Other Wells  ---------': zero1Layer,
+    'Other Wells': fourLayer,
     //'DW Pumping Stations': twentyoneLayer,
     //'DW Storage Facilities': twentytwoLayer,
-    //'-------- WW Infrastructure --------': zero3Layer,
+    
     //'Wastewater Treatment Plants': twentythreeLayer,
     //'Wastewater Pumping Stations': twentyfourLayer,
     //'Watersheds': twoLayer,
