@@ -2159,7 +2159,7 @@ function getOneMarker(feature, latlng) {
 
   // Adjust label position for specific Well_ID values
  if (['5S14', '52S14'].includes(feature.properties.Well_ID)) {
-    labelStyle = 'display: block; margin-left: -13px; margin-top: -31px;'; // Move label above and to the left
+    labelStyle = 'display: block; margin-left: -17px; margin-top: -31px;'; // Move label above and to the left
 } else if (feature.properties.Well_ID === '34S12') {
     labelStyle = 'display: block; margin-left: -40px; margin-top: -30px;'; // Move label above and to the left
     latlng = L.latLng(latlng.lat + 0.000015, latlng.lng - 0.000015); // Slightly offset the position to the left and up
@@ -2230,8 +2230,13 @@ fetch(geojsonUrl1)
 } else if (feature.properties.Well_ID === '7D39') {
     labelStyle = 'display: block; margin-top: -30px; margin-left: -30px;';
     latlng = L.latLng(latlng.lat + 0.0000185, latlng.lng + 0.0000185);
+} else if (feature.properties.Well_ID === '5D25') {
+    labelStyle = 'display: block; margin-top: -5px; margin-left: 10px;';
+    latlng = L.latLng(latlng.lat - 0.000016, latlng.lng + 0.000016);
+} else if (feature.properties.Well_ID === '5D35') {
+    labelStyle = 'display: block; margin-top: -10px; margin-left: -40px;';
 } else if (feature.properties.Well_ID === '7D26') {
-    labelStyle = 'display: block; margin-top: -5px; margin-left: 0px;';
+    labelStyle = 'display: block; margin-top: -5px; margin-left: -3px;';
 } else if (feature.properties.Well_ID === '37S11') {
     labelStyle = 'display: block; margin-top: -31px; margin-left: 5px;';
 } else if (feature.properties.Well_ID === '35D34') {
@@ -2257,7 +2262,7 @@ fetch(geojsonUrl1)
 } else if (feature.properties.Well_ID === '29S12') {
     labelStyle = 'display: block; margin-top: -25px; margin-left: -50px;';
 } else if (feature.properties.Well_ID === '42S11') {
-    labelStyle = 'display: block; margin-top: -5px; margin-left: 5px;';
+    labelStyle = 'display: block; margin-top: -8px; margin-left: 8px;';
 } 
 
   var icon2 = L.divIcon({
