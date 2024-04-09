@@ -1261,6 +1261,10 @@ popupText += (feature.properties.Well_ID) ? '<b>Well ID: </b> ' + feature.proper
 
 popupText += (feature.properties.WELL_ID) ? '<b>Well ID: </b> ' + feature.properties.WELL_ID : '';
 
+popupText += (feature.properties.Permit_Number) ? '<b>PTTW #: </b> ' + feature.properties.Permit_Number : '';
+
+popupText += (feature.properties.Source_ID) ? '<br>Well ID: ' + feature.properties.Source_ID : '';
+
 popupText += (feature.properties.Monitoring_Frequency) ? '<br>Monitoring Frequency: ' + feature.properties.Monitoring_Frequency : '';
 
 popupText += (feature.properties.Casing_Material) ? '<br><br>Casing Material:  ' + feature.properties.Casing_Material : '';
@@ -1446,6 +1450,8 @@ popupText += (feature.properties.Website) ? ' ' + feature.properties.Website : '
 
 popupText += (feature.properties.URL) ? '<br>' + feature.properties.URL : '';
 
+popupText += (feature.properties.url) ? '<br>' + feature.properties.url : '';
+
 popupText += (feature.properties.DESIGNATION) ? 'Protected Area Designation:<br> <b>' + feature.properties.DESIGNATION : '';
 
 popupText += (feature.properties.Treatment_Types) ? '<br><br>Treatment:<br>' + feature.properties.Treatment_Types : '';
@@ -1458,7 +1464,7 @@ popupText += (feature.properties.Treatment_Types) ? '<br><br>Treatment:<br>' + f
 // no need to change this code section
 
 var replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-var replacedText = (popupText).replace(replacePattern1, '<br><a href="$1" target="_blank">website</a>');
+var replacedText = (popupText).replace(replacePattern1, '<br><a href="$1" target="_blank">Permit Link</a>');
 
 
 layer.bindPopup(replacedText);
@@ -2416,6 +2422,33 @@ var fiveLayer = L.circle([43.1072, -79.5363], {
 
 fiveLayer.bindPopup('500m Restriction Zone<br> <a href="https://www.westlincoln.ca/en/build-and-invest/resources/Official-Plan-with-Schedules.pdf#page=65" target="_blank">Town of West Lincoln official Plan (p.65)</a>');
 
+//***************PTTW LAYER****************************
+
+function getSixMarker(feature, latlng) {
+  var iconColor = '#FFA500'; // Define the icon color
+  var icon6 = L.divIcon({
+    className: '', // Set to an empty string to avoid default styles
+    html: '<div style="text-align: center;"><i style="color: ' + iconColor + ';" class="fas fa-plus-circle"></i></div>'
+  });
+
+  return L.marker(latlng, {
+    icon: icon6
+  });
+}
+
+var sixLayer = L.geoJson(false, {
+  pointToLayer: getSixMarker,
+  onEachFeature: getPopup
+})//.addTo(map);
+
+var geojsonUrl6 = "https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/PTTW_Smithville3.geojson";
+fetch(geojsonUrl6)
+  .then(response => response.json())
+  .then(data => {
+    sixLayer.addData(data);
+  })
+  .catch(error => console.error('Error fetching GeoJSON data:', error));
+
 
 
 //*****************ZERO LAYER LABELS***************
@@ -2436,6 +2469,7 @@ var overlays = {
     'Biennial Frequency Wells': twoLayer,
     'Remove from program': threeLayer,
     '----------Additional Info-----------': zero1Layer,
+    'Permits-To-Take-Water (PTTW)': sixLayer,
     'MECP WWIS Database Wells': fourLayer,
     '500m Restriction Zone': fiveLayer,
     //'DW Pumping Stations': twentyoneLayer,
