@@ -142,8 +142,8 @@
     top: 45px;
     width: 250px;
     /*visibility: hidden;*/
-    height: 300px;
-    opacity: 0.9;
+    height: 250px;
+    opacity: 0.7;
     margin: 5px auto;
     padding: 0 15px;
     background: #d3d3d3;
@@ -514,10 +514,31 @@ body {
 
 <button id="toggle-button"> &nbspShow/Hide Map Details&nbsp </button>
 
+<div class="target" style="width: 250px; height: 250px; border: 1px solid #000; padding: 10px; overflow: auto; font-family: Arial, sans-serif; font-size: 14px;">
+    <br>
+    <strong><u>2024-25 MECP Monitoring Frequency </u>
+        <br>for wells at the Smithville PCB Site
+        <br> 2789 Thompson Road, Smithville, ON</strong>
+    <br><br><br>
+    <u>Well Nomenclature Legend:</u>
+    <br><br>
+    51S14 = Well ID
+    <br>
+    51 – Well Number
+    <br>
+    S or D – Shallow or Deep Bedrock
+    <br>
+    14 – Well Depth (m)
+    <br>
+    m – metres below ground surface
+</div>
 
+
+
+<!--
 <div class="target">
-
-<p><b><u>Smithville Monitoring Wells Webmap Tool </u> &nbsp</b><a href="https://www.ontario.ca/page/ministry-environment-conservation-parks" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/OwenSoundWW/main/ONLOGO.png" alt="MECP" width="60" height="20"></a><br><br> Any Info here</p>
+<p><b><u>Smithville Monitoring Wells Webmap Tool </u> &nbsp</b><a href="https://www.ontario.ca/page/ministry-environment-conservation-parks" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/OwenSoundWW/main/ONLOGO.png" alt="MECP" width="60" height="20"></a><br><br> Any Info here</p> 
+-->
 
 <!--<p><a href="https://cr-wco-contacts.netlify.app/" target="_blank"><img src="https://raw.githubusercontent.com/sean-roelofsen/YDHPTO-Region-Geojsons/main/Inspector_List_Apr_24.png" alt="MECP CR Inspector List" width="325" height="300"></a></p>
 
@@ -2380,6 +2401,20 @@ fetch(geojsonUrl4)
   })
   .catch(error => console.error('Error fetching GeoJSON data:', error));
 
+//**********500m radius circle******************
+//43.1072, -79.5363
+
+var fiveLayer = L.circle([43.1072, -79.5363], {
+    color: 'red',      // Solid red outline
+    fillColor: '#f03', // Red fill
+    fillOpacity: 0.09,  // 90% opacity
+    weight: 2,
+    radius: 500        // Radius in meters
+})//.addTo(map);
+
+// Add a popup to the circle (optional)
+
+fiveLayer.bindPopup('500m Restriction Zone<br> <a href="https://www.westlincoln.ca/en/build-and-invest/resources/Official-Plan-with-Schedules.pdf#page=65" target="_blank">Town of West Lincoln official Plan (p.65)</a>');
 
 
 
@@ -2400,8 +2435,9 @@ var overlays = {
     'Annual Frequency Wells': oneLayer,
     'Biennial Frequency Wells': twoLayer,
     'Remove from program': threeLayer,
-    '--------- Other Wells  ---------': zero1Layer,
-    'Other Wells': fourLayer,
+    '----------Additional Info-----------': zero1Layer,
+    'MECP WWIS Database Wells': fourLayer,
+    '500m Restriction Zone': fiveLayer,
     //'DW Pumping Stations': twentyoneLayer,
     //'DW Storage Facilities': twentytwoLayer,
     
