@@ -2463,7 +2463,7 @@ function getSevenMarker(feature, latlng) {
   var iconColor = '#000000'; // Define the icon color
   var icon7 = L.divIcon({
     className: '', // Set to an empty string to avoid default styles
-    html: '<div style="text-align: center;"><i style="color: ' + iconColor + ';" class="fas fa-circle"></i>' 
+    html: '<div style="text-align: center;"><i style="color: ' + iconColor + ';" class="fas fa-map-marker-alt fa-lg"></i>' 
   });
 
   return L.marker(latlng, {
@@ -2506,8 +2506,8 @@ var overlays = {
     '----------Additional Info-----------': zero1Layer,
     'Permits-To-Take-Water (PTTW)': sixLayer,
     'MECP WWIS Database Wells': fourLayer,
-    '500m Restriction Zone': fiveLayer,
-    'All Wells': sevenLayer,
+    'OP 500m Restriction Zone': fiveLayer,
+    'All MECP Wells': sevenLayer,
     //'DW Pumping Stations': twentyoneLayer,
     //'DW Storage Facilities': twentytwoLayer,
     
