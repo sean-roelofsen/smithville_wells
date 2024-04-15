@@ -1456,6 +1456,13 @@ popupText += (feature.properties.DESIGNATION) ? 'Protected Area Designation:<br>
 
 popupText += (feature.properties.Treatment_Types) ? '<br><br>Treatment:<br>' + feature.properties.Treatment_Types : '';
 
+popupText += (feature.properties.Easting) ? '<br>Easting(m): ' + feature.properties.Easting : '';
+
+popupText += (feature.properties.Northing) ? '<br>Northing(m): ' + feature.properties.Northing : '';
+
+popupText += (feature.properties.Treatment_Types) ? '<br><br>Treatment:<br>' + feature.properties.Treatment_Types : '';
+
+popupText += (feature.properties.Geologic_Formation) ? '<br><br>Geologic Formation:<br>' + feature.properties.Geologic_Formation : '';
 
 // "STREET_NUM":"725","STREET_NAM":"Lakeshore","SUFFIX":"Road","DIRECTION":"","P_O_BOX":"","MUNICIPALI":"Fort Erie",
 
@@ -2449,6 +2456,34 @@ fetch(geojsonUrl6)
   })
   .catch(error => console.error('Error fetching GeoJSON data:', error));
 
+//************************ALL WELLS LAYER***************
+
+
+function getSevenMarker(feature, latlng) {
+  var iconColor = '#000000'; // Define the icon color
+  var icon7 = L.divIcon({
+    className: '', // Set to an empty string to avoid default styles
+    html: '<div style="text-align: center;"><i style="color: ' + iconColor + ';" class="fas fa-circle"></i>' 
+  });
+
+  return L.marker(latlng, {
+    icon: icon7
+  });
+}
+
+var sevenLayer = L.geoJson(false, {
+  pointToLayer: getSevenMarker,
+  onEachFeature: getPopup
+})//.addTo(map);
+
+var geojsonUrl7 = "https://raw.githubusercontent.com/sean-roelofsen/smithville_wells/main/Smithville_Wells_ALL_WGS84.geojson";
+fetch(geojsonUrl7)
+  .then(response => response.json())
+  .then(data => {
+    sevenLayer.addData(data);
+  })
+  .catch(error => console.error('Error fetching GeoJSON data:', error));
+
 
 
 //*****************ZERO LAYER LABELS***************
@@ -2472,6 +2507,7 @@ var overlays = {
     'Permits-To-Take-Water (PTTW)': sixLayer,
     'MECP WWIS Database Wells': fourLayer,
     '500m Restriction Zone': fiveLayer,
+    'All Wells': sevenLayer,
     //'DW Pumping Stations': twentyoneLayer,
     //'DW Storage Facilities': twentytwoLayer,
     
